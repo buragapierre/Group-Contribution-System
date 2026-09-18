@@ -1,11 +1,20 @@
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchAllProfiles } from '../../services/profiles';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const { currentUser } = useUser();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const user = { name: currentUser?.name || 'Admin', avatar: currentUser?.avatar || 'AU', role: 'Admin' };
+
+  useEffect(() => {
+    fetchAllProfiles().then(setUsers).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   const totalUsers = users.length;
   const pendingVerification = users.filter(u => u.status === 'pending').length;
@@ -81,7 +90,7 @@ export default function AdminDashboard() {
                     </div>
                   </td>
                   <td>{u.email}</td>
-                  <td>{u.idNumber}</td>
+                  <td>{u.id_number}</td>
                   <td><span className={`role-badge role-${u.role}`}>{u.role}</span></td>
                   <td><span className={`status-pill status-${u.status}`}>{u.status}</span></td>
                 </tr>

@@ -1,30 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import { classes } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchClasses } from '../../services/classes';
+import { createProject } from '../../services/projects';
 import './CreateProject.css';
+
+const COLORS = ['lavender', 'blue', 'peach', 'green', 'pink'];
+const ICONS = ['✦', '◇', '◌', '◆', '◎'];
 
 export default function CreateProject() {
   const { classId } = useParams();
   const { currentUser } = useUser();
   const [form, setForm] = useState({ title: '', description: '', requirements: '', deadline: '', selectedClassId: classId || '' });
+  const [professorClasses, setProfessorClasses] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
 
-  const professorClasses = classes.filter(c => c.professorId === currentUser?.id);
-  const selectedClass = classes.find(c => c.id === parseInt(classId || form.selectedClassId));
+  useEffect(() => {
+    if (!currentUser) return;
+    fetchClasses(currentUser.id).then(setProfessorClasses).catch(() => {});
+  }, [currentUser]);
+
+  const selectedClass = professorClasses.find(c => c.id === parseInt(classId || form.selectedClassId));
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const targetClassId = classId || form.selectedClassId;
-    if (targetClassId) {
+    if (!targetClassId) return;
+
+    setSubmitting(true);
+    setError('');
+    try {
+      await createProject({
+        title: form.title,
+        description: form.description,
+        requirements: form.requirements,
+        deadline: form.deadline,
+        class_id: parseInt(targetClassId),
+        professor_id: currentUser.id,
+        professor_name: currentUser.name,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        icon: ICONS[Math.floor(Math.random() * ICONS.length)],
+        overall_progress: 0,
+        status: 'active',
+      });
       navigate(`/professor/classes/${targetClassId}`);
-    } else {
-      navigate('/professor/projects');
+    } catch (err) {
+      setError(err.message || 'Failed to create project.');
+      setSubmitting(false);
     }
   };
 
@@ -36,11 +65,12 @@ export default function CreateProject() {
         <div className="class-context-bar">
           <span className="class-context-label">Creating project for:</span>
           <span className="class-context-name">{selectedClass.course}</span>
-          <span className="class-context-meta">{selectedClass.section || 'General Class'} · {selectedClass.semester} · {selectedClass.academicYear}</span>
+          <span className="class-context-meta">{selectedClass.section || 'General Class'} · {selectedClass.semester} · {selectedClass.academic_year}</span>
         </div>
       )}
 
       <div className="create-project-form">
+        {error && <div className="auth-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           {!classId && professorClasses.length > 0 && (
             <div className="form-group">
@@ -71,7 +101,9 @@ export default function CreateProject() {
           </div>
           <div className="form-actions">
             <Button type="button" variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
-            <Button type="submit" variant="primary">Create Project</Button>
+            <Button type="submit" variant="primary" disabled={submitting}>
+              {submitting ? 'Creating...' : 'Create Project'}
+            </Button>
           </div>
         </form>
       </div>

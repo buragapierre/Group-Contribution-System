@@ -1,20 +1,37 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { tasks, contributions } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchUserTasks } from '../../services/tasks';
+import { fetchUserContributions } from '../../services/contributions';
 import './StudentDashboard.css';
 
 export default function StudentDashboard() {
   const { currentUser } = useUser();
-  const userId = currentUser?.id || 4;
   const profile = currentUser?.profile;
   const enrolledClasses = currentUser?.classes || [];
 
-  const allMyTasks = tasks.filter(t => t.assignedTo === userId);
+  const [allMyTasks, setAllMyTasks] = useState([]);
+  const [allMyContributions, setAllMyContributions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    Promise.all([
+      fetchUserTasks(currentUser.id),
+      fetchUserContributions(currentUser.id)
+    ]).then(([tasks, contributions]) => {
+      setAllMyTasks(tasks);
+      setAllMyContributions(contributions);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
+
   const completedTasks = allMyTasks.filter(t => t.status === 'verified').length;
-  const allMyContributions = contributions.filter(c => c.userId === userId);
   const avgContribution = allMyContributions.length > 0
-    ? Math.round(allMyContributions.reduce((sum, c) => sum + c.contributionPercent, 0) / allMyContributions.length)
+    ? Math.round(allMyContributions.reduce((sum, c) => sum + c.contribution_percent, 0) / allMyContributions.length)
     : 0;
 
   const user = { name: currentUser?.name || 'Student', avatar: currentUser?.avatar || 'ST', role: 'Student' };
@@ -27,7 +44,7 @@ export default function StudentDashboard() {
         <div className="sdb-welcome-avatar">{currentUser?.avatar}</div>
         <div className="sdb-welcome-info">
           <h2>Welcome, {currentUser?.name}</h2>
-          <p>{profile?.course} · {profile?.yearLevel} · Section {profile?.section}</p>
+          <p>{profile?.course} · {profile?.year_level} · Section {profile?.section}</p>
         </div>
       </div>
 
@@ -50,7 +67,7 @@ export default function StudentDashboard() {
                 <div className={`sdb-class-color ${cls.color}`}></div>
                 <div className="sdb-class-info">
                   <h4>{cls.course}</h4>
-                  <p>Prof. {cls.professorName} · {cls.section || 'General'}</p>
+                  <p>Prof. {cls.professor_name} · {cls.section || 'General'}</p>
                 </div>
               </Link>
             ))}
@@ -63,7 +80,7 @@ export default function StudentDashboard() {
             <div className="sdb-profile-mini">
               <div className="sdb-profile-field">
                 <span className="label">Student ID</span>
-                <span className="value">{profile?.studentId || currentUser?.idNumber}</span>
+                <span className="value">{profile?.student_id || currentUser?.id_number}</span>
               </div>
               <div className="sdb-profile-field">
                 <span className="label">Course</span>
@@ -71,7 +88,7 @@ export default function StudentDashboard() {
               </div>
               <div className="sdb-profile-field">
                 <span className="label">Year Level</span>
-                <span className="value">{profile?.yearLevel || '-'}</span>
+                <span className="value">{profile?.year_level || '-'}</span>
               </div>
               <div className="sdb-profile-field">
                 <span className="label">Section</span>

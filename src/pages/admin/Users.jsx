@@ -1,21 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchAllProfiles, updateProfile } from '../../services/profiles';
 import './Users.css';
 
 export default function Users() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
   const { currentUser } = useUser();
   const user = { name: currentUser?.name || 'Admin', avatar: currentUser?.avatar || 'AU', role: 'Admin' };
+
+  useEffect(() => {
+    fetchAllProfiles().then(setUsers).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const handleToggleStatus = async (userId, currentStatus) => {
+    setUpdatingId(userId);
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    try {
+      await updateProfile(userId, { status: newStatus });
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+    } catch {
+      alert('Failed to update status.');
+    }
+    setUpdatingId(null);
+  };
 
   const filteredUsers = users.filter(u => {
     const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
     const matchRole = roleFilter === 'all' || u.role === roleFilter;
     return matchSearch && matchRole;
   });
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
@@ -59,13 +80,19 @@ export default function Users() {
                   </div>
                 </td>
                 <td>{u.email}</td>
-                <td>{u.idNumber}</td>
+                <td>{u.id_number}</td>
                 <td><span className={`role-badge role-${u.role}`}>{u.role}</span></td>
                 <td><span className={`status-pill status-${u.status}`}>{u.status}</span></td>
                 <td>
                   <div className="action-btns">
                     <Link to={`/admin/users/${u.id}`} className="action-btn view">View</Link>
-                    <button className="action-btn deactivate">{u.status === 'active' ? 'Deactivate' : 'Activate'}</button>
+                    <button
+                      className="action-btn deactivate"
+                      onClick={() => handleToggleStatus(u.id, u.status)}
+                      disabled={updatingId === u.id}
+                    >
+                      {updatingId === u.id ? '...' : u.status === 'active' ? 'Deactivate' : 'Activate'}
+                    </button>
                   </div>
                 </td>
               </tr>

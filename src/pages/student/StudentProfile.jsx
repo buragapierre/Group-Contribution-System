@@ -4,7 +4,6 @@ import './StudentProfile.css';
 
 export default function StudentProfile() {
   const { currentUser } = useUser();
-  const profile = currentUser?.profile;
   const user = { name: currentUser?.name || 'Student', avatar: currentUser?.avatar || 'ST', role: 'Student' };
 
   return (
@@ -24,7 +23,7 @@ export default function StudentProfile() {
           <div className="profile-details">
             <div className="profile-field">
               <label>Student ID</label>
-              <span>{profile?.studentId || currentUser?.idNumber || '-'}</span>
+              <span>{currentUser?.id_number || '-'}</span>
             </div>
             <div className="profile-field">
               <label>Email</label>
@@ -32,7 +31,7 @@ export default function StudentProfile() {
             </div>
             <div className="profile-field">
               <label>ID Number</label>
-              <span>{currentUser?.idNumber}</span>
+              <span>{currentUser?.id_number}</span>
             </div>
           </div>
         </div>
@@ -42,15 +41,15 @@ export default function StudentProfile() {
           <div className="profile-details">
             <div className="profile-field">
               <label>Course</label>
-              <span>{profile?.course || '-'}</span>
+              <span>{currentUser?.course || '-'}</span>
             </div>
             <div className="profile-field">
               <label>Year Level</label>
-              <span>{profile?.yearLevel || '-'}</span>
+              <span>{currentUser?.year_level || '-'}</span>
             </div>
             <div className="profile-field">
               <label>Section</label>
-              <span>{profile?.section || '-'}</span>
+              <span>{currentUser?.section || '-'}</span>
             </div>
           </div>
         </div>

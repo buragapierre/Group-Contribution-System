@@ -1,21 +1,43 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import StatusBadge from '../../components/StatusBadge';
-import { tasks, users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
 import { useLeaderGroup } from '../../data/useLeaderGroup';
+import { fetchTasksByGroup } from '../../services/tasks';
+import { fetchGroupMembers } from '../../services/groups';
 import './LeaderTasks.css';
 
 export default function LeaderTasks() {
   const { currentUser } = useUser();
   const group = useLeaderGroup(currentUser);
-  const groupTasks = tasks.filter(t => t.groupId === group.id);
+  const [groupTasks, setGroupTasks] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!group) return;
+    Promise.all([
+      fetchTasksByGroup(group.id),
+      fetchGroupMembers(group.id),
+    ])
+      .then(([tasks, mems]) => {
+        setGroupTasks(tasks);
+        setMembers(mems);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [group]);
+
   const user = { name: currentUser?.name || 'Leader', avatar: currentUser?.avatar || 'LD', role: 'Group Leader' };
+
+  if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
-      <Navbar title="Task Management" subtitle={`${group.name} · ${group.projectName}`} user={user} />
+      <Navbar title="Task Management" subtitle={`${group.name} · ${group.project_name}`} user={user} />
 
       <div className="lt-header">
         <div className="lt-count">
@@ -39,7 +61,7 @@ export default function LeaderTasks() {
       ) : (
         <div className="lt-list">
           {groupTasks.map(t => {
-            const assignedUser = users.find(u => u.id === t.assignedTo);
+            const assignedUser = members.find(u => u.id === t.assigned_to);
             return (
               <Link to={`/leader/tasks/${t.id}`} key={t.id} className="lt-card">
                 <div className={`lt-card-color ${t.color}`}></div>

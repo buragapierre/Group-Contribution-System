@@ -2,14 +2,12 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from '../pages/auth/Login';
 import SignUp from '../pages/auth/SignUp';
-import OTPVerification from '../pages/auth/OTPVerification';
 import NotFound from '../pages/auth/NotFound';
 
 import AdminLayout from '../layouts/AdminLayout';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import Users from '../pages/admin/Users';
 import UserDetails from '../pages/admin/UserDetails';
-import ProfessorVerification from '../pages/admin/ProfessorVerification';
 
 import ProfessorLayout from '../layouts/ProfessorLayout';
 import ProfessorDashboard from '../pages/professor/ProfessorDashboard';
@@ -19,6 +17,7 @@ import CreateClass from '../pages/professor/CreateClass';
 import Projects from '../pages/professor/Projects';
 import CreateProject from '../pages/professor/CreateProject';
 import ProjectDetails from '../pages/professor/ProjectDetails';
+import CreateGroup from '../pages/professor/CreateGroup';
 import Groups from '../pages/professor/Groups';
 import ContributionMonitoring from '../pages/professor/ContributionMonitoring';
 import Reports from '../pages/professor/Reports';
@@ -48,13 +47,11 @@ export default function AppRoutes() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/otp-verification" element={<OTPVerification />} />
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="users/:id" element={<UserDetails />} />
-          <Route path="professor-verification" element={<ProfessorVerification />} />
         </Route>
 
         <Route path="/professor" element={<ProfessorLayout />}>
@@ -63,6 +60,7 @@ export default function AppRoutes() {
           <Route path="classes/create" element={<CreateClass />} />
           <Route path="classes/:id" element={<ProfessorClassDetail />} />
           <Route path="classes/:classId/projects/create" element={<CreateProject />} />
+          <Route path="classes/:classId/groups/create" element={<CreateGroup />} />
           <Route path="projects" element={<Projects />} />
           <Route path="projects/create" element={<CreateProject />} />
           <Route path="projects/:id" element={<ProjectDetails />} />

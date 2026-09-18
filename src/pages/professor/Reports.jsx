@@ -1,21 +1,44 @@
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import { contributions, projects, tasks, classes } from '../../data/mockData';
+import { fetchProfessorContributions } from '../../services/contributions';
+import { fetchProfessorProjects } from '../../services/projects';
+import { fetchProfessorTasks } from '../../services/tasks';
+import { fetchClasses } from '../../services/classes';
 import { useUser } from '../../data/UserContext';
 import './Reports.css';
 
 export default function Reports() {
   const { currentUser } = useUser();
+  const [professorClasses, setProfessorClasses] = useState([]);
+  const [professorProjects, setProfessorProjects] = useState([]);
+  const [professorTasks, setProfessorTasks] = useState([]);
+  const [professorContributions, setProfessorContributions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
 
-  const professorClasses = classes.filter(c => c.professorId === currentUser?.id);
-  const professorProjects = projects.filter(p => p.classId && professorClasses.some(c => c.id === p.classId));
-  const professorTasks = tasks.filter(t => t.classId && professorClasses.some(c => c.id === t.classId));
-  const professorContributions = contributions.filter(c => c.classId && professorClasses.some(cls => cls.id === c.classId));
+  useEffect(() => {
+    if (!currentUser) return;
+    Promise.all([
+      fetchClasses(currentUser.id),
+      fetchProfessorProjects(currentUser.id),
+      fetchProfessorTasks(currentUser.id),
+      fetchProfessorContributions(currentUser.id),
+    ]).then(([classes, projects, tasks, contributions]) => {
+      setProfessorClasses(classes);
+      setProfessorProjects(projects);
+      setProfessorTasks(tasks);
+      setProfessorContributions(contributions);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   const totalTasks = professorTasks.length;
   const completedTasks = professorTasks.filter(t => t.status === 'verified').length;
   const avgContribution = professorContributions.length > 0
-    ? Math.round(professorContributions.reduce((a, c) => a + c.contributionPercent, 0) / professorContributions.length)
+    ? Math.round(professorContributions.reduce((a, c) => a + c.contribution_percent, 0) / professorContributions.length)
     : 0;
 
   return (
@@ -44,7 +67,7 @@ export default function Reports() {
       <div className="reports-section">
         <h3>Project Progress by Class</h3>
         {professorClasses.map(cls => {
-          const classProjects = professorProjects.filter(p => p.classId === cls.id);
+          const classProjects = professorProjects.filter(p => p.class_id === cls.id);
           if (classProjects.length === 0) return null;
           return (
             <div key={cls.id} className="report-class-group">
@@ -53,11 +76,11 @@ export default function Reports() {
                 <div key={p.id} className="report-row">
                   <div className="report-project-info">
                     <h4>{p.title}</h4>
-                    <p>{p.groups?.length} groups</p>
+                    <p>{p.groups?.length || 0} groups</p>
                   </div>
                   <div className="report-progress">
-                    <div className="progress-bar"><div className="progress-fill" style={{ width: `${p.overallProgress}%` }}></div></div>
-                    <span>{p.overallProgress}%</span>
+                    <div className="progress-bar"><div className="progress-fill" style={{ width: `${p.overall_progress}%` }}></div></div>
+                    <span>{p.overall_progress}%</span>
                   </div>
                 </div>
               ))}

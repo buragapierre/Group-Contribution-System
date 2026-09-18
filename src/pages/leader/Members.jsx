@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
-import { users, contributions } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
 import { useLeaderGroup } from '../../data/useLeaderGroup';
+import { fetchGroupMembers, fetchGroupMemberIds } from '../../services/groups';
+import { fetchContributionsByClass } from '../../services/contributions';
+import { fetchAllProfiles } from '../../services/profiles';
 import './Members.css';
 
 export default function Members() {
@@ -14,17 +16,39 @@ export default function Members() {
   const [newMember, setNewMember] = useState('');
   const user = { name: currentUser?.name || 'Leader', avatar: currentUser?.avatar || 'LD', role: 'Group Leader' };
 
-  const memberData = group.members.map((mId, i) => {
-    const u = users.find(u => u.id === mId);
-    const c = contributions.find(c => c.userId === mId && c.classId === group.classId);
-    return { ...u, ...c, isLeader: mId === group.leaderId, index: i };
-  });
+  const [memberData, setMemberData] = useState([]);
+  const [availableStudents, setAvailableStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const availableStudents = users.filter(u => u.role === 'student' && !group.members.includes(u.id));
+  useEffect(() => {
+    if (!group) return;
+    Promise.all([
+      fetchGroupMembers(group.id),
+      fetchContributionsByClass(group.class_id),
+    ])
+      .then(([members, contributions]) => {
+        const enriched = members.map((m, i) => {
+          const c = contributions.find(c => c.user_id === m.id);
+          return { ...m, ...c, isLeader: m.id === group.leader_id, index: i };
+        });
+        setMemberData(enriched);
+        return fetchGroupMemberIds(group.id).then(ids =>
+          fetchAllProfiles().then(profiles => {
+            const available = profiles.filter(p => p.role === 'student' && !ids.includes(p.id));
+            setAvailableStudents(available);
+          })
+        );
+      })
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false));
+  }, [group]);
+
+  if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
-      <Navbar title="Members" subtitle={`${group.name} · ${group.projectName}`} user={user} />
+      <Navbar title="Members" subtitle={`${group.name} · ${group.project_name}`} user={user} />
 
       <div className="members-header">
         <div className="members-count">
@@ -46,24 +70,24 @@ export default function Members() {
             <div className="member-card-body">
               <h3>{m.name}</h3>
               <p className="member-email">{m.email}</p>
-              <p className="member-id">{m.idNumber}</p>
+              <p className="member-id">{m.id_number}</p>
             </div>
             <div className="member-card-stats">
               <div className="member-stat">
-                <strong>{m.tasksAssigned || 0}</strong>
+                <strong>{m.tasks_assigned || 0}</strong>
                 <span>Assigned</span>
               </div>
               <div className="member-stat">
-                <strong>{m.tasksCompleted || 0}</strong>
+                <strong>{m.tasks_completed || 0}</strong>
                 <span>Completed</span>
               </div>
               <div className="member-stat">
-                <strong>{m.contributionPercent || 0}%</strong>
+                <strong>{m.contribution_percent || 0}%</strong>
                 <span>Contribution</span>
               </div>
             </div>
             <div className="member-card-progress">
-              <div className="progress-bar"><div className="progress-fill" style={{ width: `${m.contributionPercent || 0}%`, background: m.contributionPercent >= 80 ? 'var(--success)' : m.contributionPercent >= 50 ? 'var(--warning)' : 'var(--danger)' }}></div></div>
+              <div className="progress-bar"><div className="progress-fill" style={{ width: `${m.contribution_percent || 0}%`, background: m.contribution_percent >= 80 ? 'var(--success)' : m.contribution_percent >= 50 ? 'var(--warning)' : 'var(--danger)' }}></div></div>
             </div>
             {!m.isLeader && (
               <div className="member-card-actions">
@@ -81,7 +105,7 @@ export default function Members() {
             <select value={newMember} onChange={(e) => setNewMember(e.target.value)}>
               <option value="">Choose a student...</option>
               {availableStudents.map(u => (
-                <option key={u.id} value={u.id}>{u.name} ({u.idNumber})</option>
+                <option key={u.id} value={u.id}>{u.name} ({u.id_number})</option>
               ))}
             </select>
           </div>

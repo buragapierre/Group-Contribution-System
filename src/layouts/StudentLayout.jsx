@@ -13,8 +13,9 @@ const studentLinks = [
 
 export default function StudentLayout() {
   const [searchParams] = useSearchParams();
-  const { currentUser, selectedLeaderGroupId } = useUser();
+  const { currentUser, loading, selectedLeaderGroupId } = useUser();
 
+  if (loading) return null;
   if (!currentUser) return <Navigate to="/login" />;
 
   const leaderGroups = currentUser?.leaderGroups || [];

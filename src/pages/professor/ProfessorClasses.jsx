@@ -1,25 +1,52 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import { classes, projects, groups } from '../../data/mockData';
+import { fetchClasses } from '../../services/classes';
+import { fetchProjectsByClass } from '../../services/projects';
+import { fetchGroupsByClass, fetchGroupMemberIds } from '../../services/groups';
 import { useUser } from '../../data/UserContext';
 import './ProfessorClasses.css';
 
 export default function ProfessorClasses() {
   const { currentUser } = useUser();
+  const [professorClasses, setProfessorClasses] = useState([]);
+  const [classStatsMap, setClassStatsMap] = useState({});
+  const [loading, setLoading] = useState(true);
+
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
 
-  const professorClasses = classes.filter(c => c.professorId === currentUser?.id);
+  useEffect(() => {
+    if (!currentUser) return;
+    fetchClasses(currentUser.id).then(async (classes) => {
+      setProfessorClasses(classes);
+      const statsMap = {};
+      for (const cls of classes) {
+        const [projects, groups] = await Promise.all([
+          fetchProjectsByClass(cls.id),
+          fetchGroupsByClass(cls.id),
+        ]);
+        let studentCount = 0;
+        for (const g of groups) {
+          const ids = await fetchGroupMemberIds(g.id);
+          studentCount += ids.length;
+        }
+        const avgProgress = projects.length > 0
+          ? Math.round(projects.reduce((sum, p) => sum + (p.overall_progress || 0), 0) / projects.length)
+          : 0;
+        statsMap[cls.id] = {
+          projectCount: projects.length,
+          groupCount: groups.length,
+          studentCount,
+          avgProgress,
+        };
+      }
+      setClassStatsMap(statsMap);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
 
-  const getClassStats = (classId) => {
-    const classProjects = projects.filter(p => p.classId === classId);
-    const classGroups = groups.filter(g => g.classId === classId);
-    const totalStudents = classGroups.reduce((sum, g) => sum + g.members.length, 0);
-    const avgProgress = classProjects.length > 0
-      ? Math.round(classProjects.reduce((sum, p) => sum + p.overallProgress, 0) / classProjects.length)
-      : 0;
-    return { projectCount: classProjects.length, groupCount: classGroups.length, studentCount: totalStudents, avgProgress };
-  };
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
@@ -34,7 +61,7 @@ export default function ProfessorClasses() {
 
       <div className="classes-grid">
         {professorClasses.map(cls => {
-          const stats = getClassStats(cls.id);
+          const stats = classStatsMap[cls.id] || { projectCount: 0, groupCount: 0, studentCount: 0, avgProgress: 0 };
           return (
             <Link to={`/professor/classes/${cls.id}`} key={cls.id} className="class-card-link">
               <div className={`class-color ${cls.color}`}>
@@ -43,7 +70,7 @@ export default function ProfessorClasses() {
               <div className="class-info">
                 <h3>{cls.course}</h3>
                 <p className="class-meta">
-                  {cls.section || 'General Class'} · {cls.semester} · {cls.academicYear}
+                  {cls.section || 'General Class'} · {cls.semester} · {cls.academic_year}
                 </p>
                 <div className="class-stats-row">
                   <span><strong>{stats.projectCount}</strong> Projects</span>

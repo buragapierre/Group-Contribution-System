@@ -1,46 +1,52 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import supabase from '../../lib/supabase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const { login } = useUser();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const found = users.find(u => u.email === email);
-    if (!found) {
-      setError('No account found with this email.');
-      return;
-    }
-    if (found.status === 'pending') {
-      setError('Your account is pending admin verification.');
-      return;
-    }
-    if (found.status === 'inactive') {
-      setError('Your account has been deactivated.');
+    setSubmitting(true);
+
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setSubmitting(false);
+      if (authError.message.includes('Invalid login')) {
+        setError('Invalid email or password.');
+      } else {
+        setError(authError.message);
+      }
       return;
     }
 
-    login(found);
+    await login(data.user);
 
-    switch (found.role) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    setSubmitting(false);
+
+    switch (profile?.role) {
       case 'admin': navigate('/admin'); break;
       case 'professor': navigate('/professor'); break;
       case 'student': navigate('/student'); break;
       default: navigate('/student');
-    }
-  };
-
-  const handleOTPClick = () => {
-    if (email) {
-      sessionStorage.setItem('otp_pending_email', email);
     }
   };
 
@@ -79,16 +85,12 @@ export default function Login() {
           <div className="form-row" style={{ justifyContent: 'flex-end', marginBottom: 20 }}>
             <a href="#" style={{ fontSize: 11, color: 'var(--primary)' }}>Forgot password?</a>
           </div>
-          <Button type="submit" variant="primary" className="full-width">Login</Button>
+          <Button type="submit" variant="primary" className="full-width" disabled={submitting}>
+            {submitting ? 'Logging in...' : 'Login'}
+          </Button>
         </form>
 
-        <div className="auth-divider">or</div>
-
-        <Link to="/otp-verification" onClick={handleOTPClick}>
-          <Button variant="secondary" className="full-width">Verify with OTP</Button>
-        </Link>
-
-        <p className="auth-link">
+        <p className="auth-link" style={{ marginTop: 16 }}>
           Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
 

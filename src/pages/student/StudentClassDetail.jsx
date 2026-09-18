@@ -1,14 +1,66 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { classes, projects, groups, tasks, contributions } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchStudentClasses } from '../../services/classes';
+import { fetchProjectsByClass } from '../../services/projects';
+import { fetchGroupsByClass, fetchGroupMemberIds } from '../../services/groups';
+import { fetchTasksByClass } from '../../services/tasks';
+import { fetchContributionsByClass } from '../../services/contributions';
 import './StudentClassDetail.css';
 
 export default function StudentClassDetail() {
   const { id } = useParams();
   const { currentUser } = useUser();
   const userId = currentUser?.id;
-  const cls = classes.find(c => c.id === parseInt(id));
+
+  const [cls, setCls] = useState(null);
+  const [classProjects, setClassProjects] = useState([]);
+  const [classGroups, setClassGroups] = useState([]);
+  const [myGroup, setMyGroup] = useState(null);
+  const [myTasks, setMyTasks] = useState([]);
+  const [myContribution, setMyContribution] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!currentUser || !id) return;
+
+    fetchStudentClasses(currentUser.id).then(allClasses => {
+      const foundCls = allClasses.find(c => c.id === parseInt(id));
+      if (!foundCls) {
+        setCls(null);
+        setLoading(false);
+        return;
+      }
+      setCls(foundCls);
+
+      return Promise.all([
+        fetchProjectsByClass(foundCls.id),
+        fetchGroupsByClass(foundCls.id),
+        fetchTasksByClass(foundCls.id),
+        fetchContributionsByClass(foundCls.id)
+      ]);
+    }).then(([projectsResult, groupsResult, tasksResult, contributionsResult]) => {
+      setClassProjects(projectsResult || []);
+      setClassGroups(groupsResult || []);
+      setMyTasks((tasksResult || []).filter(t => t.assigned_to === userId));
+
+      const userContrib = (contributionsResult || []).find(c => c.user_id === userId);
+      setMyContribution(userContrib || null);
+
+      return Promise.all(
+        (groupsResult || []).map(g =>
+          fetchGroupMemberIds(g.id).then(memberIds => ({ group: g, memberIds }))
+        )
+      );
+    }).then(groupsData => {
+      const found = (groupsData || []).find(({ memberIds }) => memberIds.includes(userId));
+      setMyGroup(found ? found.group : null);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser, id, userId]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   if (!cls) {
     return (
@@ -18,14 +70,6 @@ export default function StudentClassDetail() {
       </div>
     );
   }
-
-  const classProjects = projects.filter(p => p.classId === cls.id);
-  const classGroups = groups.filter(g => g.classId === cls.id);
-  const myGroup = classGroups.find(g => g.members.includes(userId));
-  const classTasks = tasks.filter(t => t.classId === cls.id);
-  const myTasks = classTasks.filter(t => t.assignedTo === userId);
-  const myContributions = contributions.filter(c => c.userId === userId && c.classId === cls.id);
-  const myContribution = myContributions[0];
 
   const completedTasks = myTasks.filter(t => t.status === 'verified').length;
   const dueSoon = myTasks
@@ -37,14 +81,14 @@ export default function StudentClassDetail() {
 
   return (
     <div>
-      <Navbar title={cls.course} subtitle={`${cls.section || 'General Class'} · ${cls.semester} · ${cls.academicYear}`} user={user} />
+      <Navbar title={cls.course} subtitle={`${cls.section || 'General Class'} · ${cls.semester} · ${cls.academic_year}`} user={user} />
 
       <Link to="/student/classes" className="back-link">← Back to My Classes</Link>
 
       <div className="scd-class-info">
         <div className="scd-info-row">
           <span className="scd-label">Professor</span>
-          <span className="scd-value">{cls.professorName}</span>
+          <span className="scd-value">{cls.professor_name}</span>
         </div>
         <div className="scd-info-row">
           <span className="scd-label">Section</span>
@@ -52,7 +96,7 @@ export default function StudentClassDetail() {
         </div>
         <div className="scd-info-row">
           <span className="scd-label">Semester</span>
-          <span className="scd-value">{cls.semester} · {cls.academicYear}</span>
+          <span className="scd-value">{cls.semester} · {cls.academic_year}</span>
         </div>
       </div>
 
@@ -62,11 +106,11 @@ export default function StudentClassDetail() {
             <span className="group-icon">♧</span>
             <div>
               <h3>{myGroup.name}</h3>
-              <p>{myGroup.projectName} · {myGroup.leaderName === currentUser?.name ? 'You are the Leader' : `Leader: ${myGroup.leaderName}`}</p>
+              <p>{myGroup.project_name} · {myGroup.leader_name === currentUser?.name ? 'You are the Leader' : `Leader: ${myGroup.leader_name}`}</p>
             </div>
             <div className="scd-mg-progress">
-              <div className="progress-bar" style={{ width: 80 }}><div className="progress-fill" style={{ width: `${myGroup.progress}%` }}></div></div>
-              <span>{myGroup.progress}%</span>
+              <div className="progress-bar" style={{ width: 80 }}><div className="progress-fill" style={{ width: `${myGroup.overall_progress}%` }}></div></div>
+              <span>{myGroup.overall_progress}%</span>
             </div>
           </div>
         </div>
@@ -75,7 +119,7 @@ export default function StudentClassDetail() {
       <div className="scd-stats">
         <div className="stat-card"><div className="stat-icon blue">✓</div><div><strong>{completedTasks}/{myTasks.length}</strong><span>My Tasks Done</span></div></div>
         <div className="stat-card"><div className="stat-icon yellow">⏳</div><div><strong>{dueSoon.length}</strong><span>Due Soon</span></div></div>
-        <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{myContribution?.contributionPercent || 0}%</strong><span>My Contribution</span></div></div>
+        <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{myContribution?.contribution_percent || 0}%</strong><span>My Contribution</span></div></div>
         <div className="stat-card"><div className="stat-icon purple">▤</div><div><strong>{classProjects.length}</strong><span>Projects</span></div></div>
       </div>
 
@@ -120,8 +164,8 @@ export default function StudentClassDetail() {
                   <p>{p.groups?.length || 0} groups · Due: {new Date(p.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                 </div>
                 <div className="scd-project-progress">
-                  <div className="progress-bar" style={{ width: 60 }}><div className="progress-fill" style={{ width: `${p.overallProgress}%` }}></div></div>
-                  <span>{p.overallProgress}%</span>
+                  <div className="progress-bar" style={{ width: 60 }}><div className="progress-fill" style={{ width: `${p.overall_progress}%` }}></div></div>
+                  <span>{p.overall_progress}%</span>
                 </div>
               </div>
             ))}
@@ -136,9 +180,9 @@ export default function StudentClassDetail() {
                 <div className="group-icon-sm">♧</div>
                 <div>
                   <h4>{g.name}</h4>
-                  <p>{g.members.length} members · Leader: {g.leaderName}</p>
+                  <p>{g.member_count || g.members?.length || 0} members · Leader: {g.leader_name}</p>
                 </div>
-                <span className="scd-group-progress">{g.progress}%</span>
+                <span className="scd-group-progress">{g.overall_progress}%</span>
               </div>
             ))}
           </div>
@@ -150,13 +194,13 @@ export default function StudentClassDetail() {
                 <svg viewBox="0 0 36 36">
                   <path className="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                   <path className="ring-fill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    strokeDasharray={`${myContribution.contributionPercent}, 100`} />
+                    strokeDasharray={`${myContribution.contribution_percent}, 100`} />
                 </svg>
-                <span>{myContribution.contributionPercent}%</span>
+                <span>{myContribution.contribution_percent}%</span>
               </div>
               <div className="scd-contrib-details">
-                <p><strong>{myContribution.tasksCompleted}</strong> / {myContribution.tasksAssigned} tasks completed</p>
-                <p><strong>{myContribution.onTimeCompletions}</strong> on-time submissions</p>
+                <p><strong>{myContribution.tasks_completed}</strong> / {myContribution.tasks_assigned} tasks completed</p>
+                <p><strong>{myContribution.on_time_completions}</strong> on-time submissions</p>
               </div>
             </div>
           )}

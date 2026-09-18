@@ -1,9 +1,12 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import StatusBadge from '../../components/StatusBadge';
-import { tasks, users, submissions } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchTaskById } from '../../services/tasks';
+import { fetchAllProfiles } from '../../services/profiles';
+import { fetchSubmissionsByTask } from '../../services/submissions';
 import './TaskDetails.css';
 
 export default function TaskDetails() {
@@ -11,9 +14,35 @@ export default function TaskDetails() {
   const location = useLocation();
   const { currentUser } = useUser();
   const isLeader = location.pathname.startsWith('/leader');
-  const task = tasks.find(t => t.id === parseInt(id)) || tasks[0];
-  const assigner = users.find(u => u.id === task.assignedBy);
-  const taskSubmissions = submissions.filter(s => s.taskId === task.id);
+
+  const [task, setTask] = useState(null);
+  const [assigner, setAssigner] = useState(null);
+  const [taskSubmissions, setTaskSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+    let taskResult;
+
+    fetchTaskById(parseInt(id)).then(result => {
+      taskResult = result;
+      setTask(result);
+      return Promise.all([
+        fetchAllProfiles(),
+        fetchSubmissionsByTask(result.id)
+      ]);
+    }).then(([profiles, subs]) => {
+      const foundAssigner = profiles.find(u => u.id === taskResult.assigned_by);
+      setAssigner(foundAssigner || null);
+      setTaskSubmissions(subs || []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
+
+  if (!task) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Task not found.</div>;
+
   const user = { name: currentUser?.name || (isLeader ? 'Leader' : 'Student'), avatar: currentUser?.avatar || (isLeader ? 'LD' : 'ST'), role: isLeader ? 'Group Leader' : 'Student' };
   const backLink = isLeader ? '/leader/tasks' : '/student/tasks';
   const submitLink = isLeader ? `/leader/tasks/${task.id}` : `/student/tasks/${task.id}/submit`;
@@ -58,7 +87,7 @@ export default function TaskDetails() {
                 {taskSubmissions.map(s => (
                   <div key={s.id} className="td-submission-row">
                     <div className="td-sub-info">
-                      <p><strong>{new Date(s.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</strong></p>
+                      <p><strong>{new Date(s.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</strong></p>
                       <p>{s.comment}</p>
                       <div className="td-sub-files">
                         {s.files.map((f, i) => <span key={i} className="file-tag">📄 {f}</span>)}

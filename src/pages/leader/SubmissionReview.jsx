@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import StatusBadge from '../../components/StatusBadge';
-import { submissions, tasks, users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
 import { useLeaderGroup } from '../../data/useLeaderGroup';
+import { fetchSubmissionsByGroup } from '../../services/submissions';
+import { fetchGroupMembers } from '../../services/groups';
+import { fetchTasksByGroup } from '../../services/tasks';
 import './SubmissionReview.css';
 
 export default function SubmissionReview() {
@@ -12,22 +14,38 @@ export default function SubmissionReview() {
   const group = useLeaderGroup(currentUser);
   const user = { name: currentUser?.name || 'Leader', avatar: currentUser?.avatar || 'LD', role: 'Group Leader' };
   const [reviewedIds, setReviewedIds] = useState({});
+  const [enrichedSubmissions, setEnrichedSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const enrichedSubmissions = submissions
-    .filter(s => tasks.find(task => task.id === s.taskId)?.groupId === group.id)
-    .map(s => ({
-      ...s,
-      task: tasks.find(t => t.id === s.taskId),
-      student: users.find(u => u.id === s.userId),
-    }));
+  useEffect(() => {
+    if (!group) return;
+    Promise.all([
+      fetchSubmissionsByGroup(group.id),
+      fetchTasksByGroup(group.id),
+      fetchGroupMembers(group.id),
+    ])
+      .then(([subs, groupTasks, members]) => {
+        const enriched = subs.map(s => ({
+          ...s,
+          task: groupTasks.find(t => t.id === s.task_id),
+          student: members.find(u => u.id === s.user_id),
+        }));
+        setEnrichedSubmissions(enriched);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [group]);
 
   const handleAction = (id, action) => {
     setReviewedIds(prev => ({ ...prev, [id]: action }));
   };
 
+  if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
+
   return (
     <div>
-      <Navbar title="Submission Review" subtitle={`${group.name} · ${group.projectName}`} user={user} />
+      <Navbar title="Submission Review" subtitle={`${group.name} · ${group.project_name}`} user={user} />
 
       <div className="sr-header">
         <h2>Submissions</h2>
@@ -50,9 +68,9 @@ export default function SubmissionReview() {
                   <div>
                     <strong>{s.student?.name}</strong>
                     <span className="sr-date">
-                      Submitted {new Date(s.submittedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      Submitted {new Date(s.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       {' · '}
-                      {new Date(s.submittedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+                      {new Date(s.submitted_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
                     </span>
                   </div>
                 </div>

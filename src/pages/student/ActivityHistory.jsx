@@ -1,12 +1,24 @@
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import { activities } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchUserActivities } from '../../services/activities';
 import './ActivityHistory.css';
 
 export default function ActivityHistory() {
   const { currentUser } = useUser();
-  const userId = currentUser?.id || 4;
-  const myActivities = activities.filter(a => a.userId === userId);
+  const [myActivities, setMyActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!currentUser) return;
+    fetchUserActivities(currentUser.id).then(result => {
+      setMyActivities(result);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
+
   const user = { name: currentUser?.name || 'Student', avatar: currentUser?.avatar || 'ST', role: 'Student' };
 
   const groupedByDate = myActivities.reduce((acc, a) => {

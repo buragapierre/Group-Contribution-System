@@ -1,16 +1,46 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { projects, groups, tasks } from '../../data/mockData';
+import { fetchProfessorProjects } from '../../services/projects';
+import { fetchProfessorGroups, fetchGroupMemberIds } from '../../services/groups';
+import { fetchProfessorTasks } from '../../services/tasks';
 import { useUser } from '../../data/UserContext';
 import './ProfessorDashboard.css';
 
 export default function ProfessorDashboard() {
   const { currentUser } = useUser();
+  const [professorProjects, setProfessorProjects] = useState([]);
+  const [professorGroups, setProfessorGroups] = useState([]);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [pendingTasks, setPendingTasks] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
-  const professorProjects = projects.filter(project => project.professorId === (currentUser?.id || 2));
-  const professorGroups = groups.filter(group => professorProjects.some(project => project.id === group.projectId));
-  const totalStudents = new Set(professorGroups.flatMap(group => group.members)).size;
-  const pendingTasks = tasks.filter(task => (task.status === 'submitted' || task.status === 'under_review') && professorGroups.some(group => group.id === task.groupId)).length;
+
+  useEffect(() => {
+    if (!currentUser) return;
+    Promise.all([
+      fetchProfessorProjects(currentUser.id),
+      fetchProfessorGroups(currentUser.id),
+      fetchProfessorTasks(currentUser.id),
+    ]).then(async ([projects, groups, tasks]) => {
+      setProfessorProjects(projects);
+      setProfessorGroups(groups);
+
+      const allMemberIds = new Set();
+      for (const group of groups) {
+        const ids = await fetchGroupMemberIds(group.id);
+        ids.forEach(id => allMemberIds.add(id));
+      }
+      setTotalStudents(allMemberIds.size);
+
+      const pending = tasks.filter(t => t.status === 'submitted' || t.status === 'under_review').length;
+      setPendingTasks(pending);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
@@ -29,7 +59,7 @@ export default function ProfessorDashboard() {
             {professorProjects.map(project => (
               <Link to={`/professor/projects/${project.id}`} key={project.id} className="prof-project-row">
                 <div className={`project-color ${project.color}`}><span>{project.icon}</span></div>
-                <div className="prof-project-info"><h4>{project.title}</h4><p>Due: {new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {project.overallProgress}% complete</p></div>
+                <div className="prof-project-info"><h4>{project.title}</h4><p>Due: {new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {project.overall_progress}% complete</p></div>
               </Link>
             ))}
             {professorProjects.length === 0 && <div className="empty-state-sm">No projects yet. <Link to="/professor/projects/create">Create one</Link></div>}
@@ -41,7 +71,7 @@ export default function ProfessorDashboard() {
             <Link to="/professor/classes/create" className="prof-group-row"><div className="group-icon-sm">+</div><div><h4>Create a class</h4><p>Start by setting up your course and section.</p></div></Link>
             <Link to="/professor/projects/create" className="prof-group-row"><div className="group-icon-sm">▤</div><div><h4>Create a project</h4><p>Set the project brief and deadline.</p></div></Link>
             <Link to="/professor/groups" className="prof-group-row"><div className="group-icon-sm">♧</div><div><h4>Organize groups</h4><p>Assign members and review group progress.</p></div></Link>
-            <Link to="/professor/contribution" className="prof-group-row"><div className="group-icon-sm">◉</div><div><h4>Review contributions</h4><p>See each student’s task performance.</p></div></Link>
+            <Link to="/professor/contribution" className="prof-group-row"><div className="group-icon-sm">◉</div><div><h4>Review contributions</h4><p>See each student's task performance.</p></div></Link>
           </div>
         </div>
       </div>

@@ -12,7 +12,8 @@ const professorLinks = [
 ];
 
 export default function ProfessorLayout() {
-  const { currentUser } = useUser();
+  const { currentUser, loading } = useUser();
+  if (loading) return null;
   if (!currentUser) return <Navigate to="/login" />;
   return <div className="app"><Sidebar links={professorLinks} role="professor" /><main className="content"><Outlet /></main></div>;
 }

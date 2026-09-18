@@ -1,21 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { fetchGroupMembers } from '../../services/groups';
 import './PeerEvaluation.css';
 
 export default function PeerEvaluation() {
   const [ratings, setRatings] = useState({});
   const [comments, setComments] = useState({});
+  const [peerOptions, setPeerOptions] = useState([]);
   const { currentUser } = useUser();
+  const [loading, setLoading] = useState(!!currentUser?.group?.id);
   const user = { name: currentUser?.name || 'Student', avatar: currentUser?.avatar || 'ST', role: 'Student' };
 
-  const memberIds = currentUser?.group?.members || [];
-  const peerOptions = memberIds
-    .filter(mId => mId !== currentUser?.id)
-    .map(mId => users.find(u => u.id === mId))
-    .filter(Boolean);
+  useEffect(() => {
+    if (!currentUser?.group?.id) return;
+    fetchGroupMembers(currentUser.group.id).then(members => {
+      const peers = members.filter(m => m.user_id !== currentUser.id);
+      setPeerOptions(peers);
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   const handleRating = (peerId, value) => {
     setRatings({ ...ratings, [peerId]: value });
@@ -42,8 +48,8 @@ export default function PeerEvaluation() {
           {peerOptions.map(p => (
             <div key={p.id} className="peer-card">
               <div className="peer-header">
-                <div className="cell-avatar student">{p.avatar}</div>
-                <h3>{p.name}</h3>
+                <div className="cell-avatar student">{p.avatar_color || p.avatar}</div>
+                <h3>{p.user_name || p.name}</h3>
               </div>
               <div className="peer-rating">
                 <label>Contribution Rating</label>

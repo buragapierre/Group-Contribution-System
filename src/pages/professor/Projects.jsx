@@ -1,16 +1,33 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import { projects, classes } from '../../data/mockData';
+import { fetchProfessorProjects } from '../../services/projects';
+import { fetchClasses } from '../../services/classes';
 import { useUser } from '../../data/UserContext';
 import './Projects.css';
 
 export default function Projects() {
   const { currentUser } = useUser();
+  const [professorProjects, setProfessorProjects] = useState([]);
+  const [professorClasses, setProfessorClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
 
-  const professorClasses = classes.filter(c => c.professorId === currentUser?.id);
-  const professorProjects = projects.filter(p => p.classId && professorClasses.some(c => c.id === p.classId));
+  useEffect(() => {
+    if (!currentUser) return;
+    Promise.all([
+      fetchProfessorProjects(currentUser.id),
+      fetchClasses(currentUser.id),
+    ]).then(([projects, classes]) => {
+      setProfessorProjects(projects);
+      setProfessorClasses(classes);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
@@ -29,13 +46,13 @@ export default function Projects() {
 
       <div className="projects-grid">
         {professorProjects.map(p => {
-          const cls = classes.find(c => c.id === p.classId);
+          const cls = professorClasses.find(c => c.id === p.class_id);
           return (
             <Link to={`/professor/projects/${p.id}`} key={p.id} className="project-card-link">
               <div className={`project-color ${p.color}`}>
                 <span className="project-symbol">{p.icon}</span>
                 <small>PROJECT #{String(p.id).padStart(2, '0')}</small>
-                <b>{p.overallProgress}%</b>
+                <b>{p.overall_progress}%</b>
               </div>
               <div className="project-info">
                 <h3>{p.title}</h3>
@@ -46,7 +63,7 @@ export default function Projects() {
                   <span>{p.groups?.length || 0} groups</span>
                 </div>
                 <div className="project-progress-bar">
-                  <div className="project-progress-fill" style={{ width: `${p.overallProgress}%` }}></div>
+                  <div className="project-progress-fill" style={{ width: `${p.overall_progress}%` }}></div>
                 </div>
               </div>
             </Link>

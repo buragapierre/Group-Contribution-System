@@ -1,14 +1,39 @@
+import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import { groups, classes, users } from '../../data/mockData';
+import { fetchProfessorGroups, fetchGroupMemberIds } from '../../services/groups';
+import { fetchClasses } from '../../services/classes';
+import { fetchAllProfiles } from '../../services/profiles';
 import { useUser } from '../../data/UserContext';
 import './Groups.css';
 
 export default function Groups() {
   const { currentUser } = useUser();
+  const [professorGroups, setProfessorGroups] = useState([]);
+  const [professorClasses, setProfessorClasses] = useState([]);
+  const [allProfiles, setAllProfiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
 
-  const professorClasses = classes.filter(c => c.professorId === currentUser?.id);
-  const professorGroups = groups.filter(g => g.classId && professorClasses.some(c => c.id === g.classId));
+  useEffect(() => {
+    if (!currentUser) return;
+    Promise.all([
+      fetchProfessorGroups(currentUser.id),
+      fetchClasses(currentUser.id),
+      fetchAllProfiles(),
+    ]).then(async ([groups, classes, profiles]) => {
+      const enriched = await Promise.all(groups.map(async (g) => {
+        const memberIds = await fetchGroupMemberIds(g.id);
+        return { ...g, members: memberIds };
+      }));
+      setProfessorGroups(enriched);
+      setProfessorClasses(classes);
+      setAllProfiles(profiles);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [currentUser]);
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
@@ -16,21 +41,21 @@ export default function Groups() {
 
       <div className="groups-grid">
         {professorGroups.map(g => {
-          const cls = classes.find(c => c.id === g.classId);
-          const memberUsers = g.members.map(mId => users.find(u => u.id === mId)).filter(Boolean);
+          const cls = professorClasses.find(c => c.id === g.class_id);
+          const memberUsers = (g.members || []).map(mId => allProfiles.find(u => u.id === mId)).filter(Boolean);
           return (
             <div key={g.id} className="group-card-detail">
               <div className="gcd-header">
                 <div className="group-icon">♧</div>
                 <div>
                   <h3>{g.name}</h3>
-                  <p>{g.projectName}</p>
+                  <p>{g.project_name}</p>
                   {cls && <small className="gcd-class-tag">{cls.course} · {cls.section || 'General'}</small>}
                 </div>
               </div>
               <div className="gcd-leader">
                 <span className="label">Leader</span>
-                <span className="value">{g.leaderName}</span>
+                <span className="value">{g.leader_name}</span>
               </div>
               <div className="gcd-members">
                 <span className="label">Members ({memberUsers.length})</span>

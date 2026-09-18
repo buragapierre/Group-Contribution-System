@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
-import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
 import { useLeaderGroup } from '../../data/useLeaderGroup';
+import { fetchGroupMembers } from '../../services/groups';
+import { createTask } from '../../services/tasks';
 import './CreateTask.css';
+
+const COLORS = ['lavender', 'blue', 'peach', 'green', 'pink', 'yellow'];
 
 export default function CreateTask() {
   const [form, setForm] = useState({ title: '', description: '', assignedTo: '', deadline: '', priority: 'medium' });
@@ -15,26 +18,64 @@ export default function CreateTask() {
   const group = useLeaderGroup(currentUser);
   const user = { name: currentUser?.name || 'Leader', avatar: currentUser?.avatar || 'LD', role: 'Group Leader' };
 
-  const groupMembers = group.members.map(mId => users.find(u => u.id === mId)).filter(Boolean);
+  const [groupMembers, setGroupMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!group) return;
+    fetchGroupMembers(group.id)
+      .then(members => {
+        setGroupMembers(members);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [group]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/leader/tasks${location.search}`);
+    setSubmitting(true);
+    setError('');
+    try {
+      await createTask({
+        title: form.title,
+        description: form.description,
+        group_id: group.id,
+        project_id: group.project_id,
+        class_id: group.class_id,
+        assigned_to: form.assignedTo,
+        assigned_by: currentUser.id,
+        deadline: form.deadline,
+        priority: form.priority,
+        status: 'assigned',
+        progress: 0,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      });
+      navigate(`/leader/tasks${location.search}`);
+    } catch (err) {
+      setError(err.message || 'Failed to create task.');
+      setSubmitting(false);
+    }
   };
+
+  if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   return (
     <div>
-      <Navbar title="Create Task" subtitle={`Assign to ${group.name} · ${group.projectName}`} user={user} />
+      <Navbar title="Create Task" subtitle={`Assign to ${group.name} · ${group.project_name}`} user={user} />
 
       <div className="create-task-context">
         <span className="ctc-label">Creating task for:</span>
         <span className="ctc-group">{group.name}</span>
-        <span className="ctc-project">{group.projectName}</span>
+        <span className="ctc-project">{group.project_name}</span>
       </div>
 
       <div className="create-task-form">
+        {error && <div className="auth-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Task Title</label>
@@ -69,7 +110,9 @@ export default function CreateTask() {
           </div>
           <div className="form-actions">
             <Button type="button" variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
-            <Button type="submit" variant="primary">Create Task</Button>
+            <Button type="submit" variant="primary" disabled={submitting}>
+              {submitting ? 'Creating...' : 'Create Task'}
+            </Button>
           </div>
         </form>
       </div>
