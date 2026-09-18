@@ -1,15 +1,17 @@
 import Navbar from '../../components/Navbar';
 import { users } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
+  const { currentUser } = useUser();
+  const user = { name: currentUser?.name || 'Admin', avatar: currentUser?.avatar || 'AU', role: 'Admin' };
+
   const totalUsers = users.length;
   const pendingVerification = users.filter(u => u.status === 'pending').length;
   const totalStudents = users.filter(u => u.role === 'student').length;
   const totalProfessors = users.filter(u => u.role === 'professor').length;
   const activeAccounts = users.filter(u => u.status === 'active').length;
-
-  const user = { name: 'Admin User', avatar: 'AU', role: 'Admin' };
 
   return (
     <div>

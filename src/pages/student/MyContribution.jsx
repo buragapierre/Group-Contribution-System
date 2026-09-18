@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { contributions } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
@@ -5,9 +6,10 @@ import './MyContribution.css';
 
 export default function MyContribution() {
   const { currentUser } = useUser();
+  const isLeader = useLocation().pathname.startsWith('/leader');
   const userId = currentUser?.id || 4;
   const myContrib = contributions.find(c => c.userId === userId);
-  const user = { name: currentUser?.name || 'Student', avatar: currentUser?.avatar || 'ST', role: 'Student' };
+  const user = { name: currentUser?.name || (isLeader ? 'Leader' : 'Student'), avatar: currentUser?.avatar || (isLeader ? 'LD' : 'ST'), role: isLeader ? 'Group Leader' : 'Student' };
 
   return (
     <div>

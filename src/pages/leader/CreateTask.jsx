@@ -1,27 +1,38 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
+import { useLeaderGroup } from '../../data/useLeaderGroup';
 import './CreateTask.css';
 
 export default function CreateTask() {
   const [form, setForm] = useState({ title: '', description: '', assignedTo: '', deadline: '', priority: 'medium' });
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useUser();
+  const group = useLeaderGroup(currentUser);
   const user = { name: currentUser?.name || 'Leader', avatar: currentUser?.avatar || 'LD', role: 'Group Leader' };
+
+  const groupMembers = group.members.map(mId => users.find(u => u.id === mId)).filter(Boolean);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/leader/tasks');
+    navigate(`/leader/tasks${location.search}`);
   };
 
   return (
     <div>
-      <Navbar title="Create Task" subtitle="Assign a new task to a group member." user={user} />
+      <Navbar title="Create Task" subtitle={`Assign to ${group.name} · ${group.projectName}`} user={user} />
+
+      <div className="create-task-context">
+        <span className="ctc-label">Creating task for:</span>
+        <span className="ctc-group">{group.name}</span>
+        <span className="ctc-project">{group.projectName}</span>
+      </div>
 
       <div className="create-task-form">
         <form onSubmit={handleSubmit}>
@@ -31,14 +42,14 @@ export default function CreateTask() {
           </div>
           <div className="form-group">
             <label>Description</label>
-            <textarea name="description" rows={3} placeholder="Describe the task requirements..." value={form.description} onChange={handleChange} required />
+            <textarea name="description" rows={3} placeholder="Describe the task requirements and deliverables..." value={form.description} onChange={handleChange} required />
           </div>
           <div className="form-row-2">
             <div className="form-group">
-              <label>Assigned Student</label>
+              <label>Assigned To</label>
               <select name="assignedTo" value={form.assignedTo} onChange={handleChange} required>
-                <option value="">Select member...</option>
-                {users.filter(u => u.role === 'student').map(u => (
+                <option value="">Select a member...</option>
+                {groupMembers.map(u => (
                   <option key={u.id} value={u.id}>{u.name}</option>
                 ))}
               </select>

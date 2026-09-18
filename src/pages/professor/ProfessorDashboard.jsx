@@ -1,68 +1,47 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { projects, groups, tasks } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 import './ProfessorDashboard.css';
 
 export default function ProfessorDashboard() {
-  const activeProjects = projects.length;
-  const totalGroups = groups.length;
-  const totalStudents = new Set(groups.flatMap(g => g.members)).size;
-  const pendingTasks = tasks.filter(t => t.status === 'submitted' || t.status === 'under_review').length;
-
-  const user = { name: 'Dr. Maria Santos', avatar: 'MS', role: 'Professor' };
+  const { currentUser } = useUser();
+  const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
+  const professorProjects = projects.filter(project => project.professorId === (currentUser?.id || 2));
+  const professorGroups = groups.filter(group => professorProjects.some(project => project.id === group.projectId));
+  const totalStudents = new Set(professorGroups.flatMap(group => group.members)).size;
+  const pendingTasks = tasks.filter(task => (task.status === 'submitted' || task.status === 'under_review') && professorGroups.some(group => group.id === task.groupId)).length;
 
   return (
     <div>
-      <Navbar title="Professor Dashboard" subtitle="Manage your projects, groups, and monitor student progress." user={user} />
-
+      <Navbar title="Professor Dashboard" subtitle="Create projects, organize groups, and monitor progress." user={user} />
       <div className="prof-stats">
-        <div className="stat-card"><div className="stat-icon blue">▤</div><div><strong>{activeProjects}</strong><span>Active Projects</span></div></div>
-        <div className="stat-card"><div className="stat-icon purple">♧</div><div><strong>{totalGroups}</strong><span>Groups</span></div></div>
-        <div className="stat-card"><div className="stat-icon green">🎓</div><div><strong>{totalStudents}</strong><span>Total Students</span></div></div>
-        <div className="stat-card"><div className="stat-icon yellow">⏳</div><div><strong>{pendingTasks}</strong><span>Pending Activities</span></div></div>
+        <div className="stat-card"><div className="stat-icon purple">▤</div><div><strong>{professorProjects.length}</strong><span>Active Projects</span></div></div>
+        <div className="stat-card"><div className="stat-icon blue">♧</div><div><strong>{professorGroups.length}</strong><span>Groups</span></div></div>
+        <div className="stat-card"><div className="stat-icon green">◎</div><div><strong>{totalStudents}</strong><span>Students</span></div></div>
+        <div className="stat-card"><div className="stat-icon yellow">◷</div><div><strong>{pendingTasks}</strong><span>Pending Reviews</span></div></div>
       </div>
 
       <div className="prof-grid">
         <div className="prof-left">
-          <div className="section-title">
-            <h2>Projects</h2>
-            <Link to="/professor/projects" className="view-btn">View all →</Link>
-          </div>
+          <div className="section-title"><h2>My Projects</h2><Link to="/professor/projects" className="view-btn">View all →</Link></div>
           <div className="project-list">
-            {projects.map(p => (
-              <Link to={`/professor/projects/${p.id}`} key={p.id} className="prof-project-row">
-                <div className={`project-color ${p.color}`}>
-                  <span>{p.icon}</span>
-                </div>
-                <div className="prof-project-info">
-                  <h4>{p.title}</h4>
-                  <p>{p.groups?.length} groups · Due: {new Date(p.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                </div>
-                <div className="prof-project-progress">
-                  <div className="progress-bar"><div className="progress-fill" style={{ width: `${p.overallProgress}%` }}></div></div>
-                  <span>{p.overallProgress}%</span>
-                </div>
+            {professorProjects.map(project => (
+              <Link to={`/professor/projects/${project.id}`} key={project.id} className="prof-project-row">
+                <div className={`project-color ${project.color}`}><span>{project.icon}</span></div>
+                <div className="prof-project-info"><h4>{project.title}</h4><p>Due: {new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {project.overallProgress}% complete</p></div>
               </Link>
             ))}
+            {professorProjects.length === 0 && <div className="empty-state-sm">No projects yet. <Link to="/professor/projects/create">Create one</Link></div>}
           </div>
         </div>
-
         <div className="prof-right">
-          <div className="section-title">
-            <h2>Groups</h2>
-            <Link to="/professor/groups" className="view-btn">View all →</Link>
-          </div>
+          <div className="section-title"><h2>Next Steps</h2></div>
           <div className="prof-group-list">
-            {groups.slice(0, 3).map(g => (
-              <div key={g.id} className="prof-group-row">
-                <div className="group-icon-sm">♧</div>
-                <div>
-                  <h4>{g.name}</h4>
-                  <p>{g.projectName} · {g.members.length} members</p>
-                </div>
-                <span>{g.progress}%</span>
-              </div>
-            ))}
+            <Link to="/professor/classes/create" className="prof-group-row"><div className="group-icon-sm">+</div><div><h4>Create a class</h4><p>Start by setting up your course and section.</p></div></Link>
+            <Link to="/professor/projects/create" className="prof-group-row"><div className="group-icon-sm">▤</div><div><h4>Create a project</h4><p>Set the project brief and deadline.</p></div></Link>
+            <Link to="/professor/groups" className="prof-group-row"><div className="group-icon-sm">♧</div><div><h4>Organize groups</h4><p>Assign members and review group progress.</p></div></Link>
+            <Link to="/professor/contribution" className="prof-group-row"><div className="group-icon-sm">◉</div><div><h4>Review contributions</h4><p>See each student’s task performance.</p></div></Link>
           </div>
         </div>
       </div>

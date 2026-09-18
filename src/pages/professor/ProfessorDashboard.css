@@ -129,3 +129,17 @@
   font-weight: 700;
   color: var(--primary);
 }
+
+.empty-state-sm {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+
+.empty-state-sm a {
+  color: var(--primary);
+  font-weight: 600;
+}

@@ -1,7 +1,39 @@
+.project-detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
 .project-detail-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 20px;
+}
+
+.project-class-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-bg);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+}
+
+.class-badge-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.class-badge-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.class-badge-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
 }
 
 .pd-main {

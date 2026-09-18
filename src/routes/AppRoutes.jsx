@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from '../pages/auth/Login';
 import SignUp from '../pages/auth/SignUp';
 import OTPVerification from '../pages/auth/OTPVerification';
+import NotFound from '../pages/auth/NotFound';
 
 import AdminLayout from '../layouts/AdminLayout';
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -12,6 +13,9 @@ import ProfessorVerification from '../pages/admin/ProfessorVerification';
 
 import ProfessorLayout from '../layouts/ProfessorLayout';
 import ProfessorDashboard from '../pages/professor/ProfessorDashboard';
+import ProfessorClasses from '../pages/professor/ProfessorClasses';
+import ProfessorClassDetail from '../pages/professor/ProfessorClassDetail';
+import CreateClass from '../pages/professor/CreateClass';
 import Projects from '../pages/professor/Projects';
 import CreateProject from '../pages/professor/CreateProject';
 import ProjectDetails from '../pages/professor/ProjectDetails';
@@ -21,6 +25,9 @@ import Reports from '../pages/professor/Reports';
 
 import StudentLayout from '../layouts/StudentLayout';
 import StudentDashboard from '../pages/student/StudentDashboard';
+import StudentProfile from '../pages/student/StudentProfile';
+import StudentMyClasses from '../pages/student/StudentMyClasses';
+import StudentClassDetail from '../pages/student/StudentClassDetail';
 import MyTasks from '../pages/student/MyTasks';
 import TaskDetails from '../pages/student/TaskDetails';
 import SubmitTask from '../pages/student/SubmitTask';
@@ -52,6 +59,10 @@ export default function AppRoutes() {
 
         <Route path="/professor" element={<ProfessorLayout />}>
           <Route index element={<ProfessorDashboard />} />
+          <Route path="classes" element={<ProfessorClasses />} />
+          <Route path="classes/create" element={<CreateClass />} />
+          <Route path="classes/:id" element={<ProfessorClassDetail />} />
+          <Route path="classes/:classId/projects/create" element={<CreateProject />} />
           <Route path="projects" element={<Projects />} />
           <Route path="projects/create" element={<CreateProject />} />
           <Route path="projects/:id" element={<ProjectDetails />} />
@@ -62,6 +73,9 @@ export default function AppRoutes() {
 
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboard />} />
+          <Route path="profile" element={<StudentProfile />} />
+          <Route path="classes" element={<StudentMyClasses />} />
+          <Route path="classes/:id" element={<StudentClassDetail />} />
           <Route path="tasks" element={<MyTasks />} />
           <Route path="tasks/:id" element={<TaskDetails />} />
           <Route path="tasks/:id/submit" element={<SubmitTask />} />
@@ -77,7 +91,10 @@ export default function AppRoutes() {
           <Route path="tasks/create" element={<CreateTask />} />
           <Route path="tasks/:id" element={<TaskDetails />} />
           <Route path="submissions" element={<SubmissionReview />} />
+          <Route path="contribution" element={<MyContribution />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

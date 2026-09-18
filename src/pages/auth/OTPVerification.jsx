@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import { users } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 
 export default function OTPVerification() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;
@@ -24,7 +27,21 @@ export default function OTPVerification() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/student');
+    const pendingEmail = sessionStorage.getItem('otp_pending_email');
+    const found = pendingEmail ? users.find(u => u.email === pendingEmail) : null;
+
+    if (found) {
+      login(found);
+      switch (found.role) {
+        case 'admin': navigate('/admin'); break;
+        case 'professor': navigate('/professor'); break;
+        case 'student': navigate('/student'); break;
+        default: navigate('/student');
+      }
+    } else {
+      navigate('/login');
+    }
+    sessionStorage.removeItem('otp_pending_email');
   };
 
   const handleResend = () => {

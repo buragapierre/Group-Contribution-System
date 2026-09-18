@@ -1,3 +1,32 @@
+.create-task-context {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary-bg);
+  border: 1px solid #e8d9f5;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.ctc-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ctc-group {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.ctc-project {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
 .create-task-form {
   background: var(--bg-white);
   border: 1px solid var(--border);
@@ -7,7 +36,7 @@
 }
 
 .create-task-form .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .create-task-form label {
@@ -44,4 +73,13 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 8px;
 }

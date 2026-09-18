@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import { users, groups } from '../../data/mockData';
+import { users } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
 
 export default function Login() {
@@ -33,12 +33,14 @@ export default function Login() {
     switch (found.role) {
       case 'admin': navigate('/admin'); break;
       case 'professor': navigate('/professor'); break;
-      case 'student': {
-        const isLeader = groups.some(g => g.leaderId === found.id);
-        navigate(isLeader ? '/leader' : '/student');
-        break;
-      }
+      case 'student': navigate('/student'); break;
       default: navigate('/student');
+    }
+  };
+
+  const handleOTPClick = () => {
+    if (email) {
+      sessionStorage.setItem('otp_pending_email', email);
     }
   };
 
@@ -82,7 +84,7 @@ export default function Login() {
 
         <div className="auth-divider">or</div>
 
-        <Link to="/otp-verification">
+        <Link to="/otp-verification" onClick={handleOTPClick}>
           <Button variant="secondary" className="full-width">Verify with OTP</Button>
         </Link>
 

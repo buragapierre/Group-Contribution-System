@@ -1,0 +1,102 @@
+.classes-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.class-card-link {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.class-card-link:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.class-color {
+  width: 8px;
+  min-height: 100%;
+}
+
+.class-color.lavender { background: var(--lavender); }
+.class-color.blue { background: var(--blue); }
+.class-color.peach { background: var(--peach); }
+.class-color.green { background: var(--green); }
+.class-color.yellow { background: var(--yellow); }
+.class-color.pink { background: var(--pink); }
+
+.class-icon {
+  display: none;
+}
+
+.class-info {
+  flex: 1;
+  padding: 18px 22px;
+}
+
+.class-info h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.class-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.class-stats-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.class-stats-row span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.class-stats-row strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.class-progress-bar {
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.class-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.class-progress-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}

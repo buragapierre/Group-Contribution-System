@@ -1,0 +1,60 @@
+.create-class-form {
+  max-width: 640px;
+}
+
+.create-class-form .form-group {
+  margin-bottom: 20px;
+}
+
+.create-class-form .form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.create-class-form .optional-label {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.create-class-form .form-group input,
+.create-class-form .form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  outline: none;
+  transition: 0.2s;
+  background: var(--bg-white);
+}
+
+.create-class-form .form-group input:focus,
+.create-class-form .form-group select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.create-class-form .form-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.create-class-form .form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.create-class-form .form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+}

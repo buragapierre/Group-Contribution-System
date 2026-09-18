@@ -1,95 +1,96 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { tasks, groups, contributions } from '../../data/mockData';
+import { tasks, contributions } from '../../data/mockData';
 import { useUser } from '../../data/UserContext';
-import DeadlineCalendar from '../../components/DeadlineCalendar';
 import './StudentDashboard.css';
 
 export default function StudentDashboard() {
   const { currentUser } = useUser();
   const userId = currentUser?.id || 4;
-  const groupId = currentUser?.groupId;
+  const profile = currentUser?.profile;
+  const enrolledClasses = currentUser?.classes || [];
 
-  const myTasks = tasks.filter(t => t.assignedTo === userId);
-  const group = groups.find(g => g.id === groupId) || groups[0];
-  const myContribution = contributions.find(c => c.userId === userId);
-  const completedTasks = myTasks.filter(t => t.status === 'verified').length;
-  const dueSoon = myTasks.filter(t => t.status !== 'verified').sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).slice(0, 3);
+  const allMyTasks = tasks.filter(t => t.assignedTo === userId);
+  const completedTasks = allMyTasks.filter(t => t.status === 'verified').length;
+  const allMyContributions = contributions.filter(c => c.userId === userId);
+  const avgContribution = allMyContributions.length > 0
+    ? Math.round(allMyContributions.reduce((sum, c) => sum + c.contributionPercent, 0) / allMyContributions.length)
+    : 0;
 
   const user = { name: currentUser?.name || 'Student', avatar: currentUser?.avatar || 'ST', role: 'Student' };
 
   return (
     <div>
-      <Navbar title="Student Dashboard" subtitle="Track your tasks, contributions, and group progress." user={user} />
+      <Navbar title="Student Dashboard" subtitle="Your academic overview and enrolled classes." user={user} />
 
-      <div className="student-stats">
-        <div className="stat-card"><div className="stat-icon purple">♧</div><div><strong>{group.name}</strong><span>My Group</span></div></div>
-        <div className="stat-card"><div className="stat-icon blue">✓</div><div><strong>{completedTasks}/{myTasks.length}</strong><span>Tasks Completed</span></div></div>
-        <div className="stat-card"><div className="stat-icon yellow">⏳</div><div><strong>{dueSoon.length}</strong><span>Due Soon</span></div></div>
-        <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{myContribution?.contributionPercent || 0}%</strong><span>My Contribution</span></div></div>
+      <div className="sdb-welcome">
+        <div className="sdb-welcome-avatar">{currentUser?.avatar}</div>
+        <div className="sdb-welcome-info">
+          <h2>Welcome, {currentUser?.name}</h2>
+          <p>{profile?.course} · {profile?.yearLevel} · Section {profile?.section}</p>
+        </div>
       </div>
 
-      <div className="student-grid">
-        <div className="st-left">
+      <div className="sdb-stats">
+        <div className="stat-card"><div className="stat-icon blue">▦</div><div><strong>{enrolledClasses.length}</strong><span>Enrolled Classes</span></div></div>
+        <div className="stat-card"><div className="stat-icon purple">✓</div><div><strong>{completedTasks}/{allMyTasks.length}</strong><span>Total Tasks Done</span></div></div>
+        <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{avgContribution}%</strong><span>Avg. Contribution</span></div></div>
+        <div className="stat-card"><div className="stat-icon yellow">♧</div><div><strong>{currentUser?.group ? 1 : 0}</strong><span>My Groups</span></div></div>
+      </div>
+
+      <div className="sdb-grid">
+        <div className="sdb-left">
           <div className="section-title">
-            <h2>Assigned Tasks</h2>
-            <Link to="/student/tasks" className="view-btn">View all →</Link>
+            <h2>My Classes</h2>
+            <Link to="/student/classes" className="view-btn">View all →</Link>
           </div>
-          <div className="st-task-list">
-            {myTasks.map(t => (
-              <Link to={`/student/tasks/${t.id}`} key={t.id} className="st-task-row">
-                <div className={`task-color ${t.color}`} style={{ width: 3 }}></div>
-                <div className="st-task-info">
-                  <div className="st-task-header">
-                    <h4>{t.title}</h4>
-                    <span className={`status-pill status-${t.status.replace('_', '-')}`}>{t.status.replace('_', ' ')}</span>
-                  </div>
-                  <p>Due: {new Date(t.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                  <div className="st-task-progress">
-                    <div className="progress-bar"><div className="progress-fill" style={{ width: `${t.progress}%` }}></div></div>
-                    <span>{t.progress}%</span>
-                  </div>
+          <div className="sdb-classes-list">
+            {enrolledClasses.map(cls => (
+              <Link to={`/student/classes/${cls.id}`} key={cls.id} className="sdb-class-row">
+                <div className={`sdb-class-color ${cls.color}`}></div>
+                <div className="sdb-class-info">
+                  <h4>{cls.course}</h4>
+                  <p>Prof. {cls.professorName} · {cls.section || 'General'}</p>
                 </div>
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="st-right">
-          <DeadlineCalendar tasks={myTasks} />
+        <div className="sdb-right">
+          <div className="sdb-card">
+            <div className="card-head"><h2>Quick Profile</h2></div>
+            <div className="sdb-profile-mini">
+              <div className="sdb-profile-field">
+                <span className="label">Student ID</span>
+                <span className="value">{profile?.studentId || currentUser?.idNumber}</span>
+              </div>
+              <div className="sdb-profile-field">
+                <span className="label">Course</span>
+                <span className="value">{profile?.course || '-'}</span>
+              </div>
+              <div className="sdb-profile-field">
+                <span className="label">Year Level</span>
+                <span className="value">{profile?.yearLevel || '-'}</span>
+              </div>
+              <div className="sdb-profile-field">
+                <span className="label">Section</span>
+                <span className="value">{profile?.section || '-'}</span>
+              </div>
+            </div>
+          </div>
 
-          <div className="st-card">
-            <div className="card-head"><h2>Upcoming Deadlines</h2></div>
-            {dueSoon.map(t => (
-              <div key={t.id} className="deadline-row">
-                <div className="date-box">
-                  <b>{new Date(t.deadline).getDate()}</b>
-                  <span>{new Date(t.deadline).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</span>
-                </div>
+          <div className="sdb-card">
+            <div className="card-head"><h2>Recent Tasks</h2></div>
+            {allMyTasks.slice(0, 3).map(t => (
+              <div key={t.id} className="sdb-task-mini">
+                <div className={`task-color ${t.color}`} style={{ width: 3 }}></div>
                 <div>
                   <strong>{t.title}</strong>
-                  <small>{t.progress}% complete</small>
+                  <small>{t.status.replace('_', ' ')} · Due: {new Date(t.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</small>
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="st-card">
-            <div className="card-head"><h2>My Contribution</h2></div>
-            <div className="contribution-summary">
-              <div className="cs-ring">
-                <svg viewBox="0 0 36 36">
-                  <path className="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path className="ring-fill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    strokeDasharray={`${myContribution?.contributionPercent || 0}, 100`} />
-                </svg>
-                <span>{myContribution?.contributionPercent || 0}%</span>
-              </div>
-              <div className="cs-details">
-                <p><strong>{myContribution?.tasksCompleted || 0}</strong> tasks completed</p>
-                <p><strong>{myContribution?.onTimeCompletions || 0}</strong> on-time submissions</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

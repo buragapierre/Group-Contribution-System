@@ -1,77 +1,199 @@
-.submission-list {
+.sr-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.sr-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.sr-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-bg);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.sr-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.sr-empty-icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.sr-empty h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.sr-empty p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.sr-list {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.submission-card {
+.sr-card {
   background: var(--bg-white);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 18px;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: 0.2s;
 }
 
-.sub-header {
+.sr-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.sr-card-reviewed {
+  opacity: 0.7;
+}
+
+.sr-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.sub-header strong {
-  font-size: 12px;
+.sr-submitter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.sub-header p {
+.sr-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sr-submitter strong {
+  font-size: 13px;
+  display: block;
+}
+
+.sr-date {
   font-size: 10px;
   color: var(--text-muted);
-  margin: 2px 0 0;
 }
 
-.sub-task {
-  padding: 12px;
+.sr-task-section {
   background: var(--bg);
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 14px;
 }
 
-.sub-task h4 {
+.sr-task-section h4 {
   font-size: 13px;
   font-weight: 600;
   margin: 0 0 4px;
 }
 
-.sub-task p {
-  font-size: 11px;
+.sr-task-section p {
+  font-size: 12px;
   color: var(--text-secondary);
   margin: 0;
+  line-height: 1.5;
 }
 
-.sub-files {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
+.sr-files {
+  margin-bottom: 14px;
 }
 
-.files-label {
+.sr-files-label {
+  display: block;
   font-size: 10px;
   font-weight: 600;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
-.file-tag {
-  font-size: 10px;
-  padding: 3px 8px;
+.sr-files-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sr-file {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
   background: var(--bg);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
+}
+
+.sr-file-icon {
+  font-size: 14px;
+}
+
+.sr-file-name {
+  font-size: 11px;
+  font-weight: 500;
   color: var(--text-secondary);
 }
 
-.sub-actions {
+.sr-actions {
   display: flex;
   gap: 8px;
-  padding-top: 12px;
+  padding-top: 14px;
   border-top: 1px solid var(--border-light);
+}
+
+.sr-action-done {
+  padding-top: 14px;
+  border-top: 1px solid var(--border-light);
+}
+
+.sr-action-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.sr-action-verified {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.sr-action-needs_revision {
+  background: #fdf4ff;
+  color: #a855f7;
+}
+
+.sr-action-rejected {
+  background: var(--danger-bg);
+  color: var(--danger);
 }

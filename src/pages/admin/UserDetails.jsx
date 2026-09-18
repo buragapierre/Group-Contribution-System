@@ -1,13 +1,14 @@
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { users } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 import './UserDetails.css';
 
 export default function UserDetails() {
   const { id } = useParams();
+  const { currentUser } = useUser();
   const user = users.find(u => u.id === parseInt(id)) || users[0];
-
-  const admin = { name: 'Admin User', avatar: 'AU', role: 'Admin' };
+  const admin = { name: currentUser?.name || 'Admin', avatar: currentUser?.avatar || 'AU', role: 'Admin' };
 
   return (
     <div>

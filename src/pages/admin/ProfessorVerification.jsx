@@ -1,10 +1,12 @@
 import Navbar from '../../components/Navbar';
 import { users } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 import './ProfessorVerification.css';
 
 export default function ProfessorVerification() {
+  const { currentUser } = useUser();
   const pendingUsers = users.filter(u => u.status === 'pending' && u.role === 'professor');
-  const user = { name: 'Admin User', avatar: 'AU', role: 'Admin' };
+  const user = { name: currentUser?.name || 'Admin', avatar: currentUser?.avatar || 'AU', role: 'Admin' };
 
   return (
     <div>

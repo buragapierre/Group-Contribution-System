@@ -1,20 +1,34 @@
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
-import { projects, groups, tasks } from '../../data/mockData';
+import { projects, groups, tasks, classes, users } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 import './ProjectDetails.css';
 
 export default function ProjectDetails() {
   const { id } = useParams();
+  const { currentUser } = useUser();
   const project = projects.find(p => p.id === parseInt(id)) || projects[0];
   const projectGroups = groups.filter(g => g.projectId === project.id);
   const projectTasks = tasks.filter(t => t.projectId === project.id);
-  const user = { name: 'Dr. Maria Santos', avatar: 'MS', role: 'Professor' };
+  const cls = classes.find(c => c.id === project.classId);
+  const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
 
   return (
     <div>
       <Navbar title={project.title} subtitle={project.description} user={user} />
 
-      <Link to="/professor/projects" className="back-link">← Back to Projects</Link>
+      <div className="project-detail-nav">
+        <Link to={cls ? `/professor/classes/${cls.id}` : "/professor/projects"} className="back-link">
+          ← Back to {cls ? cls.course : 'Projects'}
+        </Link>
+        {cls && (
+          <div className="project-class-badge">
+            <span className="class-badge-label">Class:</span>
+            <span className="class-badge-name">{cls.course}</span>
+            <span className="class-badge-meta">{cls.section || 'General'} · {cls.semester}</span>
+          </div>
+        )}
+      </div>
 
       <div className="project-detail-grid">
         <div className="pd-main">
@@ -46,16 +60,19 @@ export default function ProjectDetails() {
           <div className="pd-section">
             <h3>Tasks ({projectTasks.length})</h3>
             <div className="pd-task-list">
-              {projectTasks.map(t => (
-                <div key={t.id} className="pd-task-row">
-                  <div className={`task-color ${t.color}`} style={{ width: 3 }}></div>
-                  <div className="pd-task-info">
-                    <h4>{t.title}</h4>
-                    <p>Assigned to: {t.assignedTo} · Due: {new Date(t.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+              {projectTasks.map(t => {
+                const assignee = users.find(u => u.id === t.assignedTo);
+                return (
+                  <div key={t.id} className="pd-task-row">
+                    <div className={`task-color ${t.color}`} style={{ width: 3 }}></div>
+                    <div className="pd-task-info">
+                      <h4>{t.title}</h4>
+                      <p>Assigned to: {assignee?.name || 'Unassigned'} · Due: {new Date(t.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                    </div>
+                    <span className={`status-pill status-${t.status.replace('_', '-')}`}>{t.status.replace('_', ' ')}</span>
                   </div>
-                  <span className={`status-pill status-${t.status.replace('_', '-')}`}>{t.status.replace('_', ' ')}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

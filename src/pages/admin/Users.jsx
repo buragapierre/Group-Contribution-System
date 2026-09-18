@@ -2,19 +2,20 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { users } from '../../data/mockData';
+import { useUser } from '../../data/UserContext';
 import './Users.css';
 
 export default function Users() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const { currentUser } = useUser();
+  const user = { name: currentUser?.name || 'Admin', avatar: currentUser?.avatar || 'AU', role: 'Admin' };
 
   const filteredUsers = users.filter(u => {
     const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
     const matchRole = roleFilter === 'all' || u.role === roleFilter;
     return matchSearch && matchRole;
   });
-
-  const user = { name: 'Admin User', avatar: 'AU', role: 'Admin' };
 
   return (
     <div>

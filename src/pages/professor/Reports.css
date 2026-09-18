@@ -83,3 +83,23 @@
   font-weight: 700;
   color: var(--primary);
 }
+
+.report-class-group {
+  margin-bottom: 20px;
+}
+
+.report-class-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  padding: 8px 0;
+  border-bottom: 2px solid var(--primary-bg);
+  color: var(--text-primary);
+}
+
+.report-class-title span {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 8px;
+}

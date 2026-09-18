@@ -1,8 +1,10 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useUser } from '../data/UserContext';
 
 const professorLinks = [
-  { to: '/professor', icon: '▣', label: 'Dashboard' },
+  { to: '/professor', icon: '▣', label: 'Dashboard', end: true },
+  { to: '/professor/classes', icon: '▤', label: 'Classes' },
   { to: '/professor/projects', icon: '▤', label: 'Projects' },
   { to: '/professor/groups', icon: '♧', label: 'Groups' },
   { to: '/professor/contribution', icon: '◉', label: 'Contribution' },
@@ -10,12 +12,7 @@ const professorLinks = [
 ];
 
 export default function ProfessorLayout() {
-  return (
-    <div className="app">
-      <Sidebar links={professorLinks} role="professor" />
-      <main className="content">
-        <Outlet />
-      </main>
-    </div>
-  );
+  const { currentUser } = useUser();
+  if (!currentUser) return <Navigate to="/login" />;
+  return <div className="app"><Sidebar links={professorLinks} role="professor" /><main className="content"><Outlet /></main></div>;
 }
