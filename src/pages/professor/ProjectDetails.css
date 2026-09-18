@@ -1,0 +1,147 @@
+.project-detail-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+}
+
+.pd-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pd-info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.pd-info-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.pd-info-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.pd-info-header p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+
+.pd-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pd-progress label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 120px;
+}
+
+.pd-progress .progress-bar {
+  flex: 1;
+}
+
+.pd-progress span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.pd-desc h4 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.pd-desc p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 14px;
+  line-height: 1.6;
+}
+
+.pd-section {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.pd-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.pd-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.pd-task-info h4 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pd-task-info p {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.pd-sidebar {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.pd-sidebar h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.pd-group-card {
+  padding: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+}
+
+.pd-group-card h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.pd-group-card p {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}

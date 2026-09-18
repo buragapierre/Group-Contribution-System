@@ -1,0 +1,92 @@
+.task-card {
+  display: flex;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.task-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.task-color {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.task-color.lavender { background: var(--primary); }
+.task-color.blue { background: var(--info); }
+.task-color.peach { background: #f97316; }
+.task-color.green { background: var(--success); }
+.task-color.yellow { background: var(--warning); }
+.task-color.pink { background: #ec4899; }
+
+.task-content {
+  padding: 14px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.task-header h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.task-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.task-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 30px;
+}

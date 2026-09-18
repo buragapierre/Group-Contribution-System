@@ -1,0 +1,131 @@
+.prof-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.prof-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+}
+
+.prof-left, .prof-right {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prof-project-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: inherit;
+  transition: 0.2s;
+}
+
+.prof-project-row:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.prof-project-row .project-color {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.prof-project-info {
+  flex: 1;
+}
+
+.prof-project-info h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 3px;
+}
+
+.prof-project-info p {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.prof-project-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.prof-project-progress .progress-bar {
+  flex: 1;
+  height: 4px;
+}
+
+.prof-project-progress span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.prof-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prof-group-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.group-icon-sm {
+  width: 34px;
+  height: 34px;
+  background: var(--primary-bg);
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: var(--primary);
+}
+
+.prof-group-row h4 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.prof-group-row p {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.prof-group-row span {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+}

@@ -1,0 +1,74 @@
+.leader-tasks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leader-task-card {
+  display: flex;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: 0.2s;
+}
+
+.leader-task-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.leader-task-card .task-color {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.ltc-content {
+  padding: 16px 20px;
+  flex: 1;
+}
+
+.ltc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.ltc-header h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ltc-content > p {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+}
+
+.ltc-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.ltc-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ltc-progress .progress-bar {
+  flex: 1;
+}
+
+.ltc-progress span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
+}

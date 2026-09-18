@@ -1,0 +1,11 @@
+.contribution-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contribution-cell span {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 36px;
+}

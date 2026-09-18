@@ -1,0 +1,33 @@
+.members-table {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.members-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.members-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: #fafafa;
+}
+
+.members-table td {
+  padding: 12px 14px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.members-table tr:last-child td {
+  border-bottom: none;
+}

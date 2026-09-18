@@ -1,0 +1,66 @@
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.group-card-detail {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.gcd-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.gcd-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.gcd-header p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.gcd-leader, .gcd-members {
+  margin-bottom: 14px;
+}
+
+.gcd-leader .label, .gcd-members .label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.gcd-leader .value {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.gcd-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gcd-progress .progress-bar {
+  flex: 1;
+}
+
+.gcd-progress span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+}

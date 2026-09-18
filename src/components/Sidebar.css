@@ -1,0 +1,118 @@
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--bg-white);
+  border-right: 1px solid var(--border-light);
+  padding: 34px 18px 25px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow-y: auto;
+}
+
+.sidebar .logo {
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 9px 55px;
+}
+
+.sidebar .logo-box {
+  font-size: 17px;
+  width: 32px;
+  height: 32px;
+  background: var(--primary-bg);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.nav-link {
+  height: 46px;
+  border-left: 3px solid transparent;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: 0.2s;
+}
+
+.nav-link span {
+  width: 18px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background: #fafafa;
+}
+
+.nav-link.active {
+  border-left-color: var(--text-primary);
+  color: var(--text-primary);
+  font-weight: 700;
+  background: #fafafa;
+}
+
+.sidebar .logout {
+  margin-top: auto;
+}
+
+@media (max-width: 680px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    padding: 18px 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .sidebar .logo {
+    padding: 0 9px 16px;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .nav-link {
+    flex: 0 0 auto;
+    height: 40px;
+    border-left: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 0 10px;
+  }
+
+  .nav-link.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--text-primary);
+  }
+
+  .sidebar .logout {
+    display: none;
+  }
+}

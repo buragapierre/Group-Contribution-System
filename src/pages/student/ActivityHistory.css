@@ -1,0 +1,53 @@
+.activity-timeline {
+  max-width: 600px;
+}
+
+.activity-date-group {
+  margin-bottom: 28px;
+}
+
+.activity-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+.activity-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--primary-bg);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.activity-content p {
+  font-size: 12px;
+  margin: 0;
+}
+
+.activity-time {
+  font-size: 10px;
+  color: var(--text-muted);
+}

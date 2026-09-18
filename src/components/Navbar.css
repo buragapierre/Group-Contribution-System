@@ -1,0 +1,78 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 27px;
+}
+
+.topbar h1 {
+  font-size: 28px;
+  letter-spacing: -1.1px;
+  margin: 0 0 6px;
+}
+
+.topbar h1 span {
+  color: var(--primary);
+}
+
+.topbar p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.notification {
+  border: 0;
+  background: none;
+  font-size: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+.notification i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: var(--primary);
+  border-radius: 50%;
+  right: 0;
+  top: 1px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  background: #dce9ef;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.user strong,
+.user small {
+  display: block;
+}
+
+.user strong {
+  font-size: 10px;
+}
+
+.user small {
+  font-size: 8px;
+  color: var(--text-light);
+  margin-top: 3px;
+}

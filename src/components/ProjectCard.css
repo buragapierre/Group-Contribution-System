@@ -1,0 +1,83 @@
+.project-card {
+  display: flex;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.project-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.project-color {
+  width: 80px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+}
+
+.project-color.lavender { background: var(--lavender); color: var(--primary-dark); }
+.project-color.blue { background: var(--blue); color: #1d4ed8; }
+.project-color.peach { background: var(--peach); color: #c2410c; }
+.project-color.green { background: var(--green); color: #15803d; }
+
+.project-symbol {
+  font-size: 20px;
+}
+
+.project-color small {
+  font-size: 8px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.project-color b {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.project-info {
+  padding: 14px 16px;
+  flex: 1;
+}
+
+.project-info h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.project-info p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.project-info .meta {
+  display: flex;
+  gap: 14px;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.project-progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.project-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+}
