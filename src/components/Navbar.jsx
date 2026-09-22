@@ -1,3 +1,4 @@
+import notificationIcon from '../assets/notification.png';
 import './Navbar.css';
 
 export default function Navbar({ title, subtitle, user, onNotify }) {
@@ -12,7 +13,7 @@ export default function Navbar({ title, subtitle, user, onNotify }) {
       </div>
       <div className="user-area">
         <button className="notification" onClick={() => onNotify?.('You have 3 new notifications')}>
-          ♧<i></i>
+          <img src={notificationIcon} alt="Notifications" /><i></i>
         </button>
         <div className="user">
           <div className="avatar">{user?.avatar || 'U'}</div>

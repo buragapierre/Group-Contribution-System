@@ -60,11 +60,6 @@ export default function TaskDetails() {
               <h2>{task.title}</h2>
               <StatusBadge status={task.status} />
             </div>
-            <div className="td-meta">
-              <span>Due: {new Date(task.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-              <span>Priority: {task.priority}</span>
-              <span>Assigned by: {assigner?.name}</span>
-            </div>
             <div className="td-description">
               <h4>Description</h4>
               <p>{task.description}</p>
@@ -102,7 +97,31 @@ export default function TaskDetails() {
         </div>
 
         <div className="td-sidebar">
-          {!isLeader && (
+          <div className="td-info-card">
+            <h3>Task Info</h3>
+            <div className="td-info-item">
+              <span className="label">Status</span>
+              <StatusBadge status={task.status} />
+            </div>
+            <div className="td-info-item">
+              <span className="label">Priority</span>
+              <span className="value">{task.priority}</span>
+            </div>
+            <div className="td-info-item">
+              <span className="label">Deadline</span>
+              <span className="value">{new Date(task.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </div>
+            <div className="td-info-item">
+              <span className="label">Assigned By</span>
+              <span className="value">{assigner?.name || 'Leader'}</span>
+            </div>
+            <div className="td-info-item">
+              <span className="label">Progress</span>
+              <span className="value">{task.progress}%</span>
+            </div>
+          </div>
+
+          {!isLeader && task.status !== 'verified' && (
             <Link to={submitLink}>
               <Button variant="primary" className="full-width">Submit Task</Button>
             </Link>

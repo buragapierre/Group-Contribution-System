@@ -71,7 +71,7 @@ export default function Reports() {
           if (classProjects.length === 0) return null;
           return (
             <div key={cls.id} className="report-class-group">
-              <h4 className="report-class-title">{cls.course} <span>{cls.section || 'General'} · {cls.semester}</span></h4>
+              <h4 className="report-class-title">{cls.subject} <span>{cls.section || 'General'} · {cls.semester}</span></h4>
               {classProjects.map(p => (
                 <div key={p.id} className="report-row">
                   <div className="report-project-info">

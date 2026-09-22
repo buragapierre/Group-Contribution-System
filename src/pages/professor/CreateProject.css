@@ -3,7 +3,6 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 30px;
-  max-width: 600px;
 }
 
 .create-project-form .form-group {
@@ -53,7 +52,6 @@
   border-radius: var(--radius-md);
   padding: 12px 18px;
   margin-bottom: 20px;
-  max-width: 600px;
 }
 
 .class-context-label {

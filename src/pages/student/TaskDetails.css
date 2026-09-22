@@ -117,6 +117,42 @@
   gap: 12px;
 }
 
+.td-info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.td-info-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.td-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.td-info-item:last-child {
+  border-bottom: none;
+}
+
+.td-info-item .label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.td-info-item .value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .td-sidebar .full-width {
   width: 100%;
   justify-content: center;

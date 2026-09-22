@@ -49,13 +49,13 @@ export async function fetchStudentClasses(userId) {
 
 export async function createClass(classData) {
   const join_code = generateJoinCode();
-  const { data, error } = await supabase
+  const { data: cls, error } = await supabase
     .from('classes')
     .insert({ ...classData, join_code })
     .select()
     .single();
   if (error) throw error;
-  return data;
+  return cls;
 }
 
 export async function joinClassByCode(code, userId) {

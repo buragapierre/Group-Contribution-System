@@ -1,18 +1,36 @@
 -- ============================================
--- CONTRITRACK DATABASE SCHEMA
+-- SYNORA DATABASE SCHEMA
 -- Run this in Supabase SQL Editor
 -- ============================================
+
+-- 0. PROFILES (auto-created via auth trigger)
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL DEFAULT '',
+  email TEXT,
+  id_number TEXT,
+  role TEXT DEFAULT 'student',
+  avatar TEXT,
+  avatar_color TEXT DEFAULT 'blue',
+  course TEXT,
+  year_level TEXT,
+  section TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 -- 1. CLASSES
 CREATE TABLE IF NOT EXISTS classes (
   id BIGSERIAL PRIMARY KEY,
-  course TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  program TEXT,
   section TEXT,
+  year_level TEXT,
   semester TEXT NOT NULL,
   academic_year TEXT NOT NULL,
   professor_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   professor_name TEXT NOT NULL,
   color TEXT DEFAULT 'lavender',
+  join_code TEXT UNIQUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -50,6 +68,7 @@ CREATE TABLE IF NOT EXISTS groups (
   leader_id UUID NOT NULL REFERENCES profiles(id),
   leader_name TEXT NOT NULL,
   progress INT DEFAULT 0,
+  member_count INT DEFAULT 0,
   status TEXT DEFAULT 'active'
 );
 
@@ -117,6 +136,7 @@ CREATE TABLE IF NOT EXISTS activities (
 -- INDEXES
 -- ============================================
 CREATE INDEX IF NOT EXISTS idx_classes_professor ON classes(professor_id);
+CREATE INDEX IF NOT EXISTS idx_classes_join_code ON classes(join_code);
 CREATE INDEX IF NOT EXISTS idx_class_enrollments_user ON class_enrollments(user_id);
 CREATE INDEX IF NOT EXISTS idx_projects_class ON projects(class_id);
 CREATE INDEX IF NOT EXISTS idx_projects_professor ON projects(professor_id);
@@ -147,8 +167,12 @@ ALTER TABLE contributions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
 
--- Profiles: read all, update/insert own
--- (already created in Phase 1)
+-- Profiles: read all, update/insert own, admins can update any
+CREATE POLICY "Anyone can read profiles" ON profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admins can update any profile" ON profiles FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+);
 
 -- Classes: everyone can read, professors can manage their own
 CREATE POLICY "Anyone can read classes" ON classes FOR SELECT USING (true);
@@ -156,11 +180,12 @@ CREATE POLICY "Professors can insert classes" ON classes FOR INSERT WITH CHECK (
 CREATE POLICY "Professors can update own classes" ON classes FOR UPDATE USING (auth.uid() = professor_id);
 CREATE POLICY "Professors can delete own classes" ON classes FOR DELETE USING (auth.uid() = professor_id);
 
--- Class Enrollments: everyone can read, professors in that class can manage
+-- Class Enrollments: everyone can read, professors can manage, students can self-enroll
 CREATE POLICY "Anyone can read enrollments" ON class_enrollments FOR SELECT USING (true);
 CREATE POLICY "Professors can manage enrollments" ON class_enrollments FOR INSERT WITH CHECK (
   EXISTS (SELECT 1 FROM classes WHERE classes.id = class_id AND classes.professor_id = auth.uid())
 );
+CREATE POLICY "Students can self-enroll" ON class_enrollments FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Professors can delete enrollments" ON class_enrollments FOR DELETE USING (
   EXISTS (SELECT 1 FROM classes WHERE classes.id = class_id AND classes.professor_id = auth.uid())
 );
@@ -184,12 +209,9 @@ CREATE POLICY "Professors can delete groups" ON groups FOR DELETE USING (
   EXISTS (SELECT 1 FROM classes WHERE classes.id = class_id AND classes.professor_id = auth.uid())
 );
 
--- Group Members: everyone can read, leaders/professors can manage
+-- Group Members: everyone can read, leaders can manage their own group
 CREATE POLICY "Anyone can read group members" ON group_members FOR SELECT USING (true);
-CREATE POLICY "Leaders can manage own group members" ON group_members FOR INSERT WITH CHECK (
-  EXISTS (SELECT 1 FROM groups WHERE groups.id = group_id AND groups.leader_id = auth.uid())
-);
-CREATE POLICY "Leaders can remove own group members" ON group_members FOR DELETE USING (
+CREATE POLICY "Leaders can manage own group members" ON group_members FOR ALL USING (
   EXISTS (SELECT 1 FROM groups WHERE groups.id = group_id AND groups.leader_id = auth.uid())
 );
 
@@ -225,3 +247,27 @@ CREATE POLICY "Leaders can update submission status" ON submissions FOR UPDATE U
 -- Activities: everyone can read, system logs
 CREATE POLICY "Anyone can read activities" ON activities FOR SELECT USING (true);
 CREATE POLICY "System can insert activities" ON activities FOR INSERT WITH CHECK (true);
+
+-- ============================================
+-- AUTH TRIGGER: Auto-create profile on signup
+-- ============================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, name, email, id_number, role, avatar)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'name', ''),
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'id_number', ''),
+    'student',
+    upper(substring(COALESCE(NEW.raw_user_meta_data->>'name', 'U') from 1 for 2))
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import { useUser } from '../../data/UserContext';
 import { fetchAllProfiles } from '../../services/profiles';
+import studentIcon from '../../assets/student.png';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
@@ -42,7 +43,7 @@ export default function AdminDashboard() {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon green">🎓</div>
+          <div className="stat-icon green"><img src={studentIcon} alt="Students" style={{ width: 16, height: 16 }} /></div>
           <div>
             <strong>{totalStudents}</strong>
             <span>Students</span>

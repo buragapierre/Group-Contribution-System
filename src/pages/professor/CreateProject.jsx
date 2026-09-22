@@ -59,12 +59,12 @@ export default function CreateProject() {
 
   return (
     <div>
-      <Navbar title="Create Project" subtitle={selectedClass ? `Add a project to ${selectedClass.course}` : "Set up a new project for your students."} user={user} />
+      <Navbar title="Create Project" subtitle={selectedClass ? `Add a project to ${selectedClass.subject}` : "Set up a new project for your students."} user={user} />
 
       {selectedClass && (
         <div className="class-context-bar">
           <span className="class-context-label">Creating project for:</span>
-          <span className="class-context-name">{selectedClass.course}</span>
+          <span className="class-context-name">{selectedClass.subject}</span>
           <span className="class-context-meta">{selectedClass.section || 'General Class'} · {selectedClass.semester} · {selectedClass.academic_year}</span>
         </div>
       )}
@@ -78,7 +78,7 @@ export default function CreateProject() {
               <select name="selectedClassId" value={form.selectedClassId} onChange={handleChange} required>
                 <option value="">Choose a class...</option>
                 {professorClasses.map(c => (
-                  <option key={c.id} value={c.id}>{c.course} - {c.section || 'General'} ({c.semester})</option>
+                  <option key={c.id} value={c.id}>{c.subject} - {c.section || 'General'} ({c.semester})</option>
                 ))}
               </select>
             </div>

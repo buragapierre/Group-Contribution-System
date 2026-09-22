@@ -4,11 +4,12 @@ import Navbar from '../../components/Navbar';
 import { useUser } from '../../data/UserContext';
 import { fetchUserTasks } from '../../services/tasks';
 import { fetchUserContributions } from '../../services/contributions';
+import groupIcon from '../../assets/group.png';
+import classesIcon from '../../assets/classes.png';
 import './StudentDashboard.css';
 
 export default function StudentDashboard() {
   const { currentUser } = useUser();
-  const profile = currentUser?.profile;
   const enrolledClasses = currentUser?.classes || [];
 
   const [allMyTasks, setAllMyTasks] = useState([]);
@@ -44,15 +45,15 @@ export default function StudentDashboard() {
         <div className="sdb-welcome-avatar">{currentUser?.avatar}</div>
         <div className="sdb-welcome-info">
           <h2>Welcome, {currentUser?.name}</h2>
-          <p>{profile?.course} · {profile?.year_level} · Section {profile?.section}</p>
+          <p>{currentUser?.course || 'No course'} · {currentUser?.year_level || 'No year'} · Section {currentUser?.section || '-'}</p>
         </div>
       </div>
 
       <div className="sdb-stats">
-        <div className="stat-card"><div className="stat-icon blue">▦</div><div><strong>{enrolledClasses.length}</strong><span>Enrolled Classes</span></div></div>
+        <div className="stat-card"><div className="stat-icon blue"><img src={classesIcon} alt="Classes" style={{ width: 16, height: 16 }} /></div><div><strong>{enrolledClasses.length}</strong><span>Enrolled Classes</span></div></div>
         <div className="stat-card"><div className="stat-icon purple">✓</div><div><strong>{completedTasks}/{allMyTasks.length}</strong><span>Total Tasks Done</span></div></div>
         <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{avgContribution}%</strong><span>Avg. Contribution</span></div></div>
-        <div className="stat-card"><div className="stat-icon yellow">♧</div><div><strong>{currentUser?.group ? 1 : 0}</strong><span>My Groups</span></div></div>
+        <div className="stat-card"><div className="stat-icon yellow"><img src={groupIcon} alt="Groups" style={{ width: 16, height: 16 }} /></div><div><strong>{currentUser?.group ? 1 : 0}</strong><span>My Groups</span></div></div>
       </div>
 
       <div className="sdb-grid">
@@ -66,7 +67,7 @@ export default function StudentDashboard() {
               <Link to={`/student/classes/${cls.id}`} key={cls.id} className="sdb-class-row">
                 <div className={`sdb-class-color ${cls.color}`}></div>
                 <div className="sdb-class-info">
-                  <h4>{cls.course}</h4>
+                  <h4>{cls.subject}</h4>
                   <p>Prof. {cls.professor_name} · {cls.section || 'General'}</p>
                 </div>
               </Link>
@@ -80,19 +81,19 @@ export default function StudentDashboard() {
             <div className="sdb-profile-mini">
               <div className="sdb-profile-field">
                 <span className="label">Student ID</span>
-                <span className="value">{profile?.student_id || currentUser?.id_number}</span>
+                <span className="value">{currentUser?.id_number || '-'}</span>
               </div>
               <div className="sdb-profile-field">
                 <span className="label">Course</span>
-                <span className="value">{profile?.course || '-'}</span>
+                <span className="value">{currentUser?.course || '-'}</span>
               </div>
               <div className="sdb-profile-field">
                 <span className="label">Year Level</span>
-                <span className="value">{profile?.year_level || '-'}</span>
+                <span className="value">{currentUser?.year_level || '-'}</span>
               </div>
               <div className="sdb-profile-field">
                 <span className="label">Section</span>
-                <span className="value">{profile?.section || '-'}</span>
+                <span className="value">{currentUser?.section || '-'}</span>
               </div>
             </div>
           </div>

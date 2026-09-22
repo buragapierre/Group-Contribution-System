@@ -1,0 +1,267 @@
+.my-group-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.mg-empty-icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.my-group-empty h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.my-group-empty p {
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.my-group-section {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.mg-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.mg-group-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--primary-bg);
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  font-size: 18px;
+}
+
+.mg-group-header-info {
+  flex: 1;
+}
+
+.mg-group-header-info h2 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mg-group-header-info p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.my-group-status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.mg-status-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #059669;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.mg-status-info h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0 0 2px;
+}
+
+.mg-status-info p {
+  font-size: 12px;
+  color: #047857;
+  margin: 0;
+}
+
+.my-group-my-stats {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.my-group-my-stats h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.mg-my-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mg-my-stat {
+  text-align: center;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.mg-my-stat strong {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.mg-my-stat span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mg-my-progress .progress-bar {
+  height: 6px;
+}
+
+.my-group-members {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.my-group-members h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.mg-members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.mg-member-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  transition: 0.2s;
+}
+
+.mg-member-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.mg-member-leader {
+  border-color: var(--primary-light);
+  background: var(--primary-bg);
+}
+
+.mg-member-me {
+  border-color: var(--success);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.mg-member-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mg-member-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mg-leader-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--primary);
+  color: #fff;
+}
+
+.mg-you-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--success);
+  color: #fff;
+}
+
+.mg-member-info h4 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+
+.mg-member-info p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.mg-member-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mg-member-bar .progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--border-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mg-member-bar .progress-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.mg-member-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 32px;
+  text-align: right;
+}

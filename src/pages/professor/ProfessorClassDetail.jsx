@@ -8,6 +8,9 @@ import { fetchGroupsByClass } from '../../services/groups';
 import { fetchTasksByClass } from '../../services/tasks';
 import { fetchContributionsByClass } from '../../services/contributions';
 import { useUser } from '../../data/UserContext';
+import groupIcon from '../../assets/group.png';
+import studentIcon from '../../assets/student.png';
+import projectIcon from '../../assets/project.png';
 import './ProfessorClassDetail.css';
 
 export default function ProfessorClassDetail() {
@@ -63,14 +66,14 @@ export default function ProfessorClassDetail() {
 
   return (
     <div>
-      <Navbar title={cls.course} subtitle={`${cls.section || 'General Class'} · ${cls.semester} · ${cls.academic_year}`} user={user} />
+      <Navbar title={cls.subject} subtitle={`${cls.section || 'General Class'} · ${cls.semester} · ${cls.academic_year}`} user={user} />
 
       <Link to="/professor/classes" className="back-link">← Back to Classes</Link>
 
       <div className="class-detail-stats">
-        <div className="stat-card"><div className="stat-icon blue">▤</div><div><strong>{classProjects.length}</strong><span>Projects</span></div></div>
-        <div className="stat-card"><div className="stat-icon purple">♧</div><div><strong>{classGroups.length}</strong><span>Groups</span></div></div>
-        <div className="stat-card"><div className="stat-icon green">🎓</div><div><strong>{studentCount}</strong><span>Students</span></div></div>
+        <div className="stat-card"><div className="stat-icon blue"><img src={projectIcon} alt="Projects" style={{ width: 16, height: 16 }} /></div><div><strong>{classProjects.length}</strong><span>Projects</span></div></div>
+        <div className="stat-card"><div className="stat-icon purple"><img src={groupIcon} alt="Groups" style={{ width: 16, height: 16 }} /></div><div><strong>{classGroups.length}</strong><span>Groups</span></div></div>
+        <div className="stat-card"><div className="stat-icon green"><img src={studentIcon} alt="Students" style={{ width: 16, height: 16 }} /></div><div><strong>{studentCount}</strong><span>Students</span></div></div>
         <div className="stat-card"><div className="stat-icon yellow">⏳</div><div><strong>{pendingTasks}</strong><span>Pending</span></div></div>
       </div>
 
@@ -113,7 +116,7 @@ export default function ProfessorClassDetail() {
           <div className="cd-groups-list">
             {classGroups.map(g => (
               <div key={g.id} className="cd-group-row">
-                <div className="group-icon-sm">♧</div>
+                <div className="group-icon-sm"><img src={groupIcon} alt="Group" style={{ width: 14, height: 14 }} /></div>
                 <div>
                   <h4>{g.name}</h4>
                   <p>{g.project_name} · Leader: {g.leader_name} · {g.member_count || 0} members</p>
@@ -141,7 +144,7 @@ export default function ProfessorClassDetail() {
             <h3>Class Overview</h3>
             <div className="cd-overview-item">
               <span className="label">Course</span>
-              <span className="value">{cls.course}</span>
+              <span className="value">{cls.subject}</span>
             </div>
             <div className="cd-overview-item">
               <span className="label">Section</span>

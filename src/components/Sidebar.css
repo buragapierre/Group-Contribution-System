@@ -93,6 +93,12 @@
   font-size: 16px;
 }
 
+.nav-icon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
 .nav-link:hover {
   color: var(--text-primary);
   background: #fafafa;

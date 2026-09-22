@@ -68,7 +68,7 @@ export default function ProfessorClasses() {
                 <span className="class-icon">▣</span>
               </div>
               <div className="class-info">
-                <h3>{cls.course}</h3>
+                <h3>{cls.subject}</h3>
                 <p className="class-meta">
                   {cls.section || 'General Class'} · {cls.semester} · {cls.academic_year}
                 </p>

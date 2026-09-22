@@ -25,7 +25,7 @@ export default function StudentMyClasses() {
     setJoinSuccess('');
     try {
       const cls = await joinClassByCode(joinCode, currentUser.id);
-      setJoinSuccess(`Joined ${cls.course} successfully!`);
+      setJoinSuccess(`Joined ${cls.subject} successfully!`);
       setJoinCode('');
       setTimeout(() => {
         setShowJoinModal(false);
@@ -52,7 +52,7 @@ export default function StudentMyClasses() {
           <Link to={`/student/classes/${cls.id}`} key={cls.id} className="my-class-card">
             <div className={`mcc-color ${cls.color || 'blue'}`}></div>
             <div className="mcc-content">
-              <h3>{cls.course}</h3>
+              <h3>{cls.subject}</h3>
               <p className="mcc-professor">Prof. {cls.professor_name}</p>
               <div className="mcc-meta">
                 <span>{cls.section || 'General Class'}</span>

@@ -7,6 +7,8 @@ import { fetchTasksByGroup } from '../../services/tasks';
 import { fetchGroupMembers } from '../../services/groups';
 import { fetchContributionsByClass } from '../../services/contributions';
 import { fetchClassById } from '../../services/classes';
+import groupIcon from '../../assets/group.png';
+import memberIcon from '../../assets/member.png';
 import './GroupWorkspace.css';
 
 export default function GroupWorkspace() {
@@ -59,7 +61,7 @@ export default function GroupWorkspace() {
         <div className="ws-context-bar">
           <span className="ws-ctx-icon">▣</span>
           <div className="ws-ctx-info">
-            <span className="ws-ctx-class">{cls.course}</span>
+            <span className="ws-ctx-class">{cls.subject}</span>
             <span className="ws-ctx-meta">{cls.section || 'General Class'} · {cls.semester} · {cls.professor_name}</span>
           </div>
         </div>
@@ -105,14 +107,14 @@ export default function GroupWorkspace() {
           </div>
         </div>
         <div className="ws-stat-card">
-          <div className="ws-stat-icon green">◉</div>
+          <div className="ws-stat-icon green"><img src={memberIcon} alt="Members" style={{ width: 16, height: 16 }} /></div>
           <div className="ws-stat-body">
             <strong>{group.progress}%</strong>
             <span>Group Progress</span>
           </div>
         </div>
         <div className="ws-stat-card">
-          <div className="ws-stat-icon purple">♧</div>
+          <div className="ws-stat-icon purple"><img src={groupIcon} alt="Group" style={{ width: 16, height: 16 }} /></div>
           <div className="ws-stat-body">
             <strong>{memberDetails.length}</strong>
             <span>Members</span>

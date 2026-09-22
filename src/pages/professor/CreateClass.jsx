@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import { useUser } from '../../data/UserContext';
 import { createClass } from '../../services/classes';
+import { PROGRAMS } from '../../lib/constants';
 import './CreateClass.css';
 
 const SEMESTERS = [
@@ -12,13 +13,17 @@ const SEMESTERS = [
   "Summer",
 ];
 
+const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year'];
+
 const COLORS = ['lavender', 'blue', 'peach', 'green', 'pink'];
 
 export default function CreateClass() {
   const navigate = useNavigate();
   const { currentUser } = useUser();
   const [form, setForm] = useState({
-    course: '',
+    subject: '',
+    program: '',
+    yearLevel: '',
     academicYear: 'AY 2026-2027',
     semester: '',
     section: '',
@@ -39,7 +44,9 @@ export default function CreateClass() {
     setError('');
     try {
       await createClass({
-        course: form.course,
+        subject: form.subject,
+        program: form.program,
+        year_level: form.yearLevel || null,
         academic_year: form.academicYear,
         semester: form.semester,
         section: form.section || null,
@@ -62,22 +69,51 @@ export default function CreateClass() {
         {error && <div className="auth-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Course</label>
+            <label>Subject</label>
             <input
               type="text"
-              name="course"
-              value={form.course}
+              name="subject"
+              value={form.subject}
               onChange={handleChange}
               placeholder="e.g. Web Systems and Technologies"
               required
             />
           </div>
 
+          <div className="form-group">
+            <label>Program / Course</label>
+            <select
+              name="program"
+              value={form.program}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select a program...</option>
+              {PROGRAMS.map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+            <p className="form-hint">Used for organizing and filtering students.</p>
+          </div>
+
           <div className="form-row-2">
+            <div className="form-group">
+              <label>Year Level <span className="optional-label">(Optional)</span></label>
+              <select name="yearLevel" value={form.yearLevel} onChange={handleChange}>
+                <option value="">All year levels</option>
+                {YEAR_LEVELS.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <p className="form-hint">Leave blank to include all year levels.</p>
+            </div>
             <div className="form-group">
               <label>Academic Year</label>
               <input type="text" name="academicYear" value={form.academicYear} onChange={handleChange} placeholder="e.g. AY 2026-2027" required />
             </div>
+          </div>
+
+          <div className="form-row-2">
             <div className="form-group">
               <label>Semester</label>
               <select name="semester" value={form.semester} onChange={handleChange} required>
@@ -87,19 +123,18 @@ export default function CreateClass() {
                 ))}
               </select>
             </div>
+            <div className="form-group">
+              <label>Section <span className="optional-label">(Optional)</span></label>
+              <input
+                type="text"
+                name="section"
+                value={form.section}
+                onChange={handleChange}
+                placeholder="e.g. A"
+              />
+            </div>
           </div>
-
-          <div className="form-group">
-            <label>Section <span className="optional-label">(Optional)</span></label>
-            <input
-              type="text"
-              name="section"
-              value={form.section}
-              onChange={handleChange}
-              placeholder="e.g. BSIT 3-A"
-            />
-            <p className="form-hint">Leave blank if you handle students without a specific section.</p>
-          </div>
+          <p className="form-hint">Students join using the class code shown after creation.</p>
 
           <div className="form-actions">
             <Button type="button" variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>

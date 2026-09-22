@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { fetchProjectById } from '../../services/projects';
-import { fetchGroupsByProject } from '../../services/groups';
-import { fetchTasksByProject } from '../../services/tasks';
+import { fetchGroupsByProject, fetchGroupMembers } from '../../services/groups';
+import { fetchTasksByGroup } from '../../services/tasks';
 import { fetchClassById } from '../../services/classes';
-import { fetchAllProfiles } from '../../services/profiles';
 import { useUser } from '../../data/UserContext';
 import './ProjectDetails.css';
 
@@ -14,9 +13,7 @@ export default function ProjectDetails() {
   const { currentUser } = useUser();
   const [project, setProject] = useState(null);
   const [projectGroups, setProjectGroups] = useState([]);
-  const [projectTasks, setProjectTasks] = useState([]);
   const [cls, setCls] = useState(null);
-  const [allProfiles, setAllProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
@@ -25,14 +22,24 @@ export default function ProjectDetails() {
     if (!id) return;
     fetchProjectById(id).then(async (proj) => {
       setProject(proj);
-      const [groups, tasks, profiles] = await Promise.all([
-        fetchGroupsByProject(proj.id),
-        fetchTasksByProject(proj.id),
-        fetchAllProfiles(),
-      ]);
-      setProjectGroups(groups);
-      setProjectTasks(tasks);
-      setAllProfiles(profiles);
+      const groups = await fetchGroupsByProject(proj.id);
+
+      const groupsData = await Promise.all(groups.map(async (g) => {
+        const [tasks, members] = await Promise.all([
+          fetchTasksByGroup(g.id),
+          fetchGroupMembers(g.id),
+        ]);
+        const completed = tasks.filter(t => t.status === 'verified').length;
+        return {
+          ...g,
+          taskCount: tasks.length,
+          completedTasks: completed,
+          progress: tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0,
+          memberCount: members.length,
+        };
+      }));
+
+      setProjectGroups(groupsData);
       if (proj.class_id) {
         const classData = await fetchClassById(proj.class_id);
         setCls(classData);
@@ -49,13 +56,13 @@ export default function ProjectDetails() {
       <Navbar title={project.title} subtitle={project.description} user={user} />
 
       <div className="project-detail-nav">
-        <Link to={cls ? `/professor/classes/${cls.id}` : "/professor/projects"} className="back-link">
-          ← Back to {cls ? cls.course : 'Projects'}
+        <Link to={cls ? `/professor/classes/${cls.id}` : "/professor/classes"} className="back-link">
+          ← Back to {cls ? cls.subject : 'Classes'}
         </Link>
         {cls && (
           <div className="project-class-badge">
             <span className="class-badge-label">Class:</span>
-            <span className="class-badge-name">{cls.course}</span>
+            <span className="class-badge-name">{cls.subject}</span>
             <span className="class-badge-meta">{cls.section || 'General'} · {cls.semester}</span>
           </div>
         )}
@@ -89,37 +96,59 @@ export default function ProjectDetails() {
           </div>
 
           <div className="pd-section">
-            <h3>Tasks ({projectTasks.length})</h3>
-            <div className="pd-task-list">
-              {projectTasks.map(t => {
-                const assignee = allProfiles.find(u => u.id === t.assigned_to);
-                return (
-                  <div key={t.id} className="pd-task-row">
-                    <div className={`task-color ${t.color}`} style={{ width: 3 }}></div>
-                    <div className="pd-task-info">
-                      <h4>{t.title}</h4>
-                      <p>Assigned to: {assignee?.name || 'Unassigned'} · Due: {new Date(t.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+            <h3>Group Progress ({projectGroups.length})</h3>
+            {projectGroups.length === 0 ? (
+              <div className="cd-empty">No groups assigned to this project yet.</div>
+            ) : (
+              <div className="pd-group-progress-list">
+                {projectGroups.map(g => (
+                  <div key={g.id} className="pd-group-progress-card">
+                    <div className="pd-gp-header">
+                      <div className="pd-gp-info">
+                        <h4>{g.name}</h4>
+                        <p>Leader: {g.leader_name} · {g.memberCount} member{g.memberCount !== 1 ? 's' : ''}</p>
+                      </div>
+                      <div className="pd-gp-stat">
+                        <strong>{g.completedTasks}/{g.taskCount}</strong>
+                        <span>tasks</span>
+                      </div>
                     </div>
-                    <span className={`status-pill status-${t.status.replace('_', '-')}`}>{t.status.replace('_', ' ')}</span>
+                    <div className="pd-gp-progress">
+                      <div className="progress-bar" style={{ height: 6 }}>
+                        <div className="progress-fill" style={{
+                          width: `${g.progress}%`,
+                          background: g.progress >= 80 ? 'var(--success)' : g.progress >= 50 ? 'var(--warning)' : 'var(--primary)'
+                        }}></div>
+                      </div>
+                      <span className="pd-gp-pct">{g.progress}%</span>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="pd-sidebar">
-          <h3>Groups ({projectGroups.length})</h3>
-          {projectGroups.map(g => (
-            <div key={g.id} className="pd-group-card">
-              <h4>{g.name}</h4>
-              <p>Leader: {g.leader_name}</p>
-              <div className="progress-bar" style={{ height: 4, marginTop: 8 }}>
-                <div className="progress-fill" style={{ width: `${g.progress}%` }}></div>
-              </div>
-              <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--primary)' }}>{g.progress}%</span>
+          <div className="pd-sidebar-card">
+            <h3>Project Info</h3>
+            <div className="pd-overview-item">
+              <span className="label">Total Groups</span>
+              <span className="value">{projectGroups.length}</span>
             </div>
-          ))}
+            <div className="pd-overview-item">
+              <span className="label">Total Tasks</span>
+              <span className="value">{projectGroups.reduce((sum, g) => sum + g.taskCount, 0)}</span>
+            </div>
+            <div className="pd-overview-item">
+              <span className="label">Completed</span>
+              <span className="value">{projectGroups.reduce((sum, g) => sum + g.completedTasks, 0)}</span>
+            </div>
+            <div className="pd-overview-item">
+              <span className="label">Deadline</span>
+              <span className="value">{new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

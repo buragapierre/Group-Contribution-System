@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="auth-card" style={{ textAlign: 'center' }}>
         <div className="logo">
           <span className="logo-box">▦</span>
-          <span>CONTRITRACK.</span>
+          <span>SYNORA.</span>
         </div>
         <h1 style={{ fontSize: 48, margin: '20px 0 8px' }}>404</h1>
         <p className="subtitle">Page not found. The page you're looking for doesn't exist or has been moved.</p>

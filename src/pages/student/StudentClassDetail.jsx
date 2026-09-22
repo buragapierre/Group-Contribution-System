@@ -7,6 +7,8 @@ import { fetchProjectsByClass } from '../../services/projects';
 import { fetchGroupsByClass, fetchGroupMemberIds } from '../../services/groups';
 import { fetchTasksByClass } from '../../services/tasks';
 import { fetchContributionsByClass } from '../../services/contributions';
+import groupIcon from '../../assets/group.png';
+import projectIcon from '../../assets/project.png';
 import './StudentClassDetail.css';
 
 export default function StudentClassDetail() {
@@ -81,7 +83,7 @@ export default function StudentClassDetail() {
 
   return (
     <div>
-      <Navbar title={cls.course} subtitle={`${cls.section || 'General Class'} · ${cls.semester} · ${cls.academic_year}`} user={user} />
+      <Navbar title={cls.subject} subtitle={`${cls.section || 'General Class'} · ${cls.semester} · ${cls.academic_year}`} user={user} />
 
       <Link to="/student/classes" className="back-link">← Back to My Classes</Link>
 
@@ -103,7 +105,7 @@ export default function StudentClassDetail() {
       {myGroup && (
         <div className="scd-my-group">
           <div className="scd-mg-header">
-            <span className="group-icon">♧</span>
+            <span className="group-icon"><img src={groupIcon} alt="Group" /></span>
             <div>
               <h3>{myGroup.name}</h3>
               <p>{myGroup.project_name} · {myGroup.leader_name === currentUser?.name ? 'You are the Leader' : `Leader: ${myGroup.leader_name}`}</p>
@@ -120,7 +122,7 @@ export default function StudentClassDetail() {
         <div className="stat-card"><div className="stat-icon blue">✓</div><div><strong>{completedTasks}/{myTasks.length}</strong><span>My Tasks Done</span></div></div>
         <div className="stat-card"><div className="stat-icon yellow">⏳</div><div><strong>{dueSoon.length}</strong><span>Due Soon</span></div></div>
         <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{myContribution?.contribution_percent || 0}%</strong><span>My Contribution</span></div></div>
-        <div className="stat-card"><div className="stat-icon purple">▤</div><div><strong>{classProjects.length}</strong><span>Projects</span></div></div>
+        <div className="stat-card"><div className="stat-icon purple"><img src={projectIcon} alt="Projects" style={{ width: 16, height: 16 }} /></div><div><strong>{classProjects.length}</strong><span>Projects</span></div></div>
       </div>
 
       <div className="scd-grid">
@@ -177,7 +179,7 @@ export default function StudentClassDetail() {
             <h3>Groups in This Class</h3>
             {classGroups.map(g => (
               <div key={g.id} className="scd-group-row">
-                <div className="group-icon-sm">♧</div>
+                <div className="group-icon-sm"><img src={groupIcon} alt="Group" style={{ width: 14, height: 14 }} /></div>
                 <div>
                   <h4>{g.name}</h4>
                   <p>{g.member_count || g.members?.length || 0} members · Leader: {g.leader_name}</p>

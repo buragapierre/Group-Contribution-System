@@ -1,5 +1,5 @@
 -- ============================================
--- CONTRITRACK SEED DATA
+-- SYNORA SEED DATA
 -- Run AFTER creating the schema
 --
 -- IMPORTANT: Replace the UUIDs below with your
@@ -33,12 +33,12 @@
 -- ============================================
 
 -- Classes
-INSERT INTO classes (id, course, section, semester, academic_year, professor_id, professor_name, color) VALUES
-(1, 'Web Systems and Technologies', 'BSIT 3-A', '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'lavender'),
-(2, 'Database Management Systems', 'BSIT 3-B', '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'blue'),
-(3, 'Information Assurance and Security', NULL, '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'peach'),
-(4, 'Capstone Project', 'BSIT 4-A', '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'green'),
-(5, 'Systems Integration', 'BSIT 3-A', '1st Semester', 'AY 2026-2027', 'PASTE_PROF2_UUID', 'Dr. James Reyes', 'pink');
+INSERT INTO classes (id, subject, program, section, semester, academic_year, professor_id, professor_name, color) VALUES
+(1, 'Web Systems and Technologies', 'BS Information Technology', 'A', '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'lavender'),
+(2, 'Database Management Systems', 'BS Information Technology', 'B', '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'blue'),
+(3, 'Information Assurance and Security', 'BS Information Technology', NULL, '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'peach'),
+(4, 'Capstone Project', 'BS Information Technology', 'A', '1st Semester', 'AY 2026-2027', 'PASTE_PROF1_UUID', 'Dr. Maria Santos', 'green'),
+(5, 'Systems Integration', 'BS Information Technology', 'A', '1st Semester', 'AY 2026-2027', 'PASTE_PROF2_UUID', 'Dr. James Reyes', 'pink');
 
 -- Class Enrollments
 INSERT INTO class_enrollments (class_id, user_id) VALUES

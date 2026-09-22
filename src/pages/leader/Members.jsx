@@ -4,7 +4,7 @@ import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { useUser } from '../../data/UserContext';
 import { useLeaderGroup } from '../../data/useLeaderGroup';
-import { fetchGroupMembers, fetchGroupMemberIds } from '../../services/groups';
+import { fetchGroupMembers, fetchGroupMemberIds, addGroupMember, removeGroupMember } from '../../services/groups';
 import { fetchContributionsByClass } from '../../services/contributions';
 import { fetchAllProfiles } from '../../services/profiles';
 import './Members.css';
@@ -20,7 +20,7 @@ export default function Members() {
   const [availableStudents, setAvailableStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const refreshMembers = () => {
     if (!group) return;
     Promise.all([
       fetchGroupMembers(group.id),
@@ -41,7 +41,37 @@ export default function Members() {
       })
       .then(() => setLoading(false))
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (!group) return;
+    refreshMembers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group]);
+
+  const handleAddMember = async () => {
+    if (!newMember) return;
+    try {
+      await addGroupMember(group.id, newMember);
+      setNewMember('');
+      setShowAdd(false);
+      setLoading(true);
+      refreshMembers();
+    } catch (err) {
+      alert(err.message || 'Failed to add member.');
+    }
+  };
+
+  const handleRemoveMember = async (userId) => {
+    if (!confirm('Remove this member from the group?')) return;
+    try {
+      await removeGroupMember(group.id, userId);
+      setLoading(true);
+      refreshMembers();
+    } catch (err) {
+      alert(err.message || 'Failed to remove member.');
+    }
+  };
 
   if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
@@ -91,7 +121,7 @@ export default function Members() {
             </div>
             {!m.isLeader && (
               <div className="member-card-actions">
-                <button className="member-remove-btn">Remove</button>
+                <button className="member-remove-btn" onClick={() => handleRemoveMember(m.id)}>Remove</button>
               </div>
             )}
           </div>
@@ -114,7 +144,7 @@ export default function Members() {
           )}
           <div className="add-member-actions">
             <Button variant="secondary" onClick={() => setShowAdd(false)}>Cancel</Button>
-            <Button variant="primary" disabled={!newMember}>Add to Group</Button>
+            <Button variant="primary" disabled={!newMember} onClick={handleAddMember}>Add to Group</Button>
           </div>
         </div>
       </Modal>

@@ -65,7 +65,7 @@ export default function ContributionMonitoring() {
                     </div>
                   </td>
                   <td>{grp?.name || '-'}</td>
-                  <td>{cls?.course || '-'}<br /><small style={{ color: 'var(--text-muted)', fontSize: 10 }}>{cls?.section || 'General'}</small></td>
+                  <td>{cls?.subject || '-'}<br /><small style={{ color: 'var(--text-muted)', fontSize: 10 }}>{cls?.section || 'General'}</small></td>
                   <td>{c.tasks_assigned}</td>
                   <td>{c.tasks_completed}</td>
                   <td>{c.on_time_completions}</td>

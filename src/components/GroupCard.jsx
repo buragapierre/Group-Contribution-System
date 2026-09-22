@@ -1,10 +1,11 @@
+import groupIcon from '../assets/group.png';
 import './GroupCard.css';
 
 export default function GroupCard({ group, onClick }) {
   return (
     <div className="group-card" onClick={() => onClick?.(group)}>
       <div className="group-header">
-        <div className="group-icon">♧</div>
+        <div className="group-icon"><img src={groupIcon} alt="Group" /></div>
         <div>
           <h3>{group.name}</h3>
           <p>{group.projectName}</p>

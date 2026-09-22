@@ -14,7 +14,6 @@ import ProfessorDashboard from '../pages/professor/ProfessorDashboard';
 import ProfessorClasses from '../pages/professor/ProfessorClasses';
 import ProfessorClassDetail from '../pages/professor/ProfessorClassDetail';
 import CreateClass from '../pages/professor/CreateClass';
-import Projects from '../pages/professor/Projects';
 import CreateProject from '../pages/professor/CreateProject';
 import ProjectDetails from '../pages/professor/ProjectDetails';
 import CreateGroup from '../pages/professor/CreateGroup';
@@ -25,8 +24,10 @@ import Reports from '../pages/professor/Reports';
 import StudentLayout from '../layouts/StudentLayout';
 import StudentDashboard from '../pages/student/StudentDashboard';
 import StudentProfile from '../pages/student/StudentProfile';
+import ProfileCompletion from '../pages/student/ProfileCompletion';
 import StudentMyClasses from '../pages/student/StudentMyClasses';
 import StudentClassDetail from '../pages/student/StudentClassDetail';
+import MyGroup from '../pages/student/MyGroup';
 import MyTasks from '../pages/student/MyTasks';
 import TaskDetails from '../pages/student/TaskDetails';
 import SubmitTask from '../pages/student/SubmitTask';
@@ -61,8 +62,6 @@ export default function AppRoutes() {
           <Route path="classes/:id" element={<ProfessorClassDetail />} />
           <Route path="classes/:classId/projects/create" element={<CreateProject />} />
           <Route path="classes/:classId/groups/create" element={<CreateGroup />} />
-          <Route path="projects" element={<Projects />} />
-          <Route path="projects/create" element={<CreateProject />} />
           <Route path="projects/:id" element={<ProjectDetails />} />
           <Route path="groups" element={<Groups />} />
           <Route path="contribution" element={<ContributionMonitoring />} />
@@ -72,8 +71,10 @@ export default function AppRoutes() {
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboard />} />
           <Route path="profile" element={<StudentProfile />} />
+          <Route path="complete-profile" element={<ProfileCompletion />} />
           <Route path="classes" element={<StudentMyClasses />} />
           <Route path="classes/:id" element={<StudentClassDetail />} />
+          <Route path="group" element={<MyGroup />} />
           <Route path="tasks" element={<MyTasks />} />
           <Route path="tasks/:id" element={<TaskDetails />} />
           <Route path="tasks/:id/submit" element={<SubmitTask />} />

@@ -1,5 +1,92 @@
-.my-tasks-grid {
+.mt-filters {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mt-filter-btn {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.mt-filter-btn:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.mt-filter-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.mt-filter-count {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.mt-filter-btn.active .mt-filter-count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.my-tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.mt-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-white);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.mt-empty-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--primary-bg);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  color: var(--primary);
+  margin: 0 auto 16px;
+}
+
+.mt-empty h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--text-primary);
+}
+
+.mt-empty p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .my-tasks-grid {
+    grid-template-columns: 1fr;
+  }
 }

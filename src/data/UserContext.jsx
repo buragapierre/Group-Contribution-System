@@ -115,6 +115,30 @@ export function UserProvider({ children }) {
     setSelectedLeaderGroupId(null);
   };
 
+  useEffect(() => {
+    if (!currentUser) return;
+
+    let timeout;
+    const TIMEOUT_DURATION = 30 * 60 * 1000; 
+
+    const resetTimeout = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        logout();
+      }, TIMEOUT_DURATION);
+    };
+
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
+    events.forEach(event => window.addEventListener(event, resetTimeout));
+    resetTimeout();
+
+    return () => {
+      clearTimeout(timeout);
+      events.forEach(event => window.removeEventListener(event, resetTimeout));
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
   const getSelectedClass = () => {
     if (!selectedClassId || !currentUser) return null;
     return currentUser.classes?.find(c => c.id === selectedClassId) || null;

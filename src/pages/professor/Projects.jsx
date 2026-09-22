@@ -4,6 +4,8 @@ import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import { fetchProfessorProjects } from '../../services/projects';
 import { fetchClasses } from '../../services/classes';
+import { fetchGroupsByClass } from '../../services/groups';
+import { fetchTasksByProject } from '../../services/tasks';
 import { useUser } from '../../data/UserContext';
 import './Projects.css';
 
@@ -11,6 +13,7 @@ export default function Projects() {
   const { currentUser } = useUser();
   const [professorProjects, setProfessorProjects] = useState([]);
   const [professorClasses, setProfessorClasses] = useState([]);
+  const [projectCounts, setProjectCounts] = useState({});
   const [loading, setLoading] = useState(true);
 
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
@@ -23,7 +26,25 @@ export default function Projects() {
     ]).then(([projects, classes]) => {
       setProfessorProjects(projects);
       setProfessorClasses(classes);
-      setLoading(false);
+
+      const counts = {};
+      const promises = projects.map(p =>
+        Promise.all([
+          fetchTasksByProject(p.id),
+          fetchGroupsByClass(p.class_id),
+        ]).then(([tasks, groups]) => {
+          counts[p.id] = {
+            taskCount: tasks.length,
+            completedTasks: tasks.filter(t => t.status === 'verified').length,
+            groupCount: groups.length,
+          };
+        })
+      );
+
+      Promise.all(promises).then(() => {
+        setProjectCounts(counts);
+        setLoading(false);
+      });
     }).catch(() => setLoading(false));
   }, [currentUser]);
 
@@ -47,20 +68,24 @@ export default function Projects() {
       <div className="projects-grid">
         {professorProjects.map(p => {
           const cls = professorClasses.find(c => c.id === p.class_id);
+          const counts = projectCounts[p.id] || { taskCount: 0, completedTasks: 0, groupCount: 0 };
           return (
             <Link to={`/professor/projects/${p.id}`} key={p.id} className="project-card-link">
               <div className={`project-color ${p.color}`}>
                 <span className="project-symbol">{p.icon}</span>
-                <small>PROJECT #{String(p.id).padStart(2, '0')}</small>
                 <b>{p.overall_progress}%</b>
               </div>
               <div className="project-info">
-                <h3>{p.title}</h3>
-                <p>{p.description}</p>
+                <div className="project-info-top">
+                  <h3>{p.title}</h3>
+                  <span className={`project-status project-status-${p.status}`}>{p.status}</span>
+                </div>
+                <p className="project-desc">{p.description}</p>
                 <div className="meta">
-                  <span>{cls?.course || 'Unknown Class'}</span>
+                  <span>{cls?.subject || 'Unknown Class'}</span>
                   <span>Due: {new Date(p.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                  <span>{p.groups?.length || 0} groups</span>
+                  <span>{counts.groupCount} group{counts.groupCount !== 1 ? 's' : ''}</span>
+                  <span>{counts.completedTasks}/{counts.taskCount} tasks</span>
                 </div>
                 <div className="project-progress-bar">
                   <div className="project-progress-fill" style={{ width: `${p.overall_progress}%` }}></div>
@@ -69,6 +94,9 @@ export default function Projects() {
             </Link>
           );
         })}
+        {professorProjects.length === 0 && (
+          <div className="cd-empty">No projects yet. Create one to get started.</div>
+        )}
       </div>
     </div>
   );
