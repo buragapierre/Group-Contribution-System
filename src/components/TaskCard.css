@@ -13,6 +13,10 @@
   border-color: var(--primary-light);
 }
 
+.task-card-overdue {
+  border-left: 3px solid var(--danger, #ef4444);
+}
+
 .task-color {
   width: 4px;
   flex-shrink: 0;
@@ -43,6 +47,35 @@
   font-size: 13px;
   font-weight: 600;
   margin: 0;
+}
+
+.task-badges {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.task-badges .task-timing {
+  display: inline-block;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.task-timing.timing-overdue {
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger, #ef4444);
+}
+
+.task-timing.timing-soon {
+  background: var(--warning-bg, #fef3c7);
+  color: #b45309;
 }
 
 .task-desc {

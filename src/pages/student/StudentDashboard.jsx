@@ -6,6 +6,8 @@ import { fetchUserTasks } from '../../services/tasks';
 import { fetchUserContributions } from '../../services/contributions';
 import groupIcon from '../../assets/group.png';
 import classesIcon from '../../assets/classes.png';
+import taskIcon from '../../assets/task.png';
+import averageIcon from '../../assets/average.png';
 import './StudentDashboard.css';
 
 export default function StudentDashboard() {
@@ -39,7 +41,7 @@ export default function StudentDashboard() {
 
   return (
     <div>
-      <Navbar title="Student Dashboard" subtitle="Your academic overview and enrolled classes." user={user} />
+      <Navbar title="Student Dashboard" subtitle="Your academic overview and enrolled classes" user={user} />
 
       <div className="sdb-welcome">
         <div className="sdb-welcome-avatar">{currentUser?.avatar}</div>
@@ -51,8 +53,8 @@ export default function StudentDashboard() {
 
       <div className="sdb-stats">
         <div className="stat-card"><div className="stat-icon blue"><img src={classesIcon} alt="Classes" style={{ width: 16, height: 16 }} /></div><div><strong>{enrolledClasses.length}</strong><span>Enrolled Classes</span></div></div>
-        <div className="stat-card"><div className="stat-icon purple">✓</div><div><strong>{completedTasks}/{allMyTasks.length}</strong><span>Total Tasks Done</span></div></div>
-        <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{avgContribution}%</strong><span>Avg. Contribution</span></div></div>
+        <div className="stat-card"><div className="stat-icon purple"><img src={taskIcon} alt="Tasks" style={{ width: 16, height: 16 }} /></div><div><strong>{completedTasks}/{allMyTasks.length}</strong><span>Total Tasks Done</span></div></div>
+        <div className="stat-card"><div className="stat-icon green"><img src={averageIcon} alt="Average" style={{ width: 16, height: 16 }} /></div><div><strong>{avgContribution}%</strong><span>Avg. Contribution</span></div></div>
         <div className="stat-card"><div className="stat-icon yellow"><img src={groupIcon} alt="Groups" style={{ width: 16, height: 16 }} /></div><div><strong>{currentUser?.group ? 1 : 0}</strong><span>My Groups</span></div></div>
       </div>
 

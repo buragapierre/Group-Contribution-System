@@ -1,3 +1,164 @@
+.mt-reminder {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.mt-reminder-overdue {
+  border-left-color: var(--danger, #ef4444);
+}
+
+.mt-reminder-soon {
+  border-left-color: var(--warning, #f59e0b);
+}
+
+.mt-reminder-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mt-reminder-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.mt-reminder-overdue .mt-reminder-icon {
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger, #ef4444);
+}
+
+.mt-reminder-soon .mt-reminder-icon {
+  background: var(--warning-bg, #fef3c7);
+  color: var(--warning, #f59e0b);
+}
+
+.mt-reminder-head h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+
+.mt-reminder-count {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.mt-reminder-overdue .mt-reminder-count {
+  background: var(--danger, #ef4444);
+}
+
+.mt-reminder-soon .mt-reminder-count {
+  background: var(--warning, #f59e0b);
+}
+
+.mt-reminder-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.mt-reminder-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 4px;
+  border-top: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.mt-reminder-row:hover {
+  background: var(--bg, #f8fafc);
+  border-radius: var(--radius-sm);
+  padding-left: 8px;
+}
+
+.mt-reminder-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mt-reminder-dot.overdue {
+  background: var(--danger, #ef4444);
+}
+
+.mt-reminder-dot.soon {
+  background: var(--warning, #f59e0b);
+}
+
+.mt-reminder-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mt-reminder-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mt-reminder-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.mt-reminder-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mt-reminder-pill.overdue {
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger, #ef4444);
+}
+
+.mt-reminder-pill.soon {
+  background: var(--warning-bg, #fef3c7);
+  color: #b45309;
+}
+
+.mt-reminder-go {
+  color: var(--text-muted);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.mt-reminder-row:hover .mt-reminder-go {
+  color: var(--primary);
+  transform: translateX(2px);
+}
+
 .mt-filters {
   display: flex;
   gap: 6px;

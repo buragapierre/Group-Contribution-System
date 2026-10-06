@@ -56,93 +56,127 @@ export default function CreateClass() {
       });
       navigate('/professor/classes');
     } catch (err) {
-      setError(err.message || 'Failed to create class.');
+      setError(err.message || 'Failed to create class');
       setSubmitting(false);
     }
   };
 
   return (
     <div>
-      <Navbar title="Create Class" subtitle="Set up a new class for your students." user={user} />
+      <Navbar title="Create Class" subtitle="Set up a new class for your students" user={user} />
 
-      <div className="create-class-form">
-        {error && <div className="auth-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Subject</label>
-            <input
-              type="text"
-              name="subject"
-              value={form.subject}
-              onChange={handleChange}
-              placeholder="e.g. Web Systems and Technologies"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Program / Course</label>
-            <select
-              name="program"
-              value={form.program}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Select a program...</option>
-              {PROGRAMS.map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
-            <p className="form-hint">Used for organizing and filtering students.</p>
-          </div>
-
-          <div className="form-row-2">
-            <div className="form-group">
-              <label>Year Level <span className="optional-label">(Optional)</span></label>
-              <select name="yearLevel" value={form.yearLevel} onChange={handleChange}>
-                <option value="">All year levels</option>
-                {YEAR_LEVELS.map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <p className="form-hint">Leave blank to include all year levels.</p>
-            </div>
-            <div className="form-group">
-              <label>Academic Year</label>
-              <input type="text" name="academicYear" value={form.academicYear} onChange={handleChange} placeholder="e.g. AY 2026-2027" required />
-            </div>
-          </div>
-
-          <div className="form-row-2">
-            <div className="form-group">
-              <label>Semester</label>
-              <select name="semester" value={form.semester} onChange={handleChange} required>
-                <option value="">Select semester</option>
-                {SEMESTERS.map(s => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Section <span className="optional-label">(Optional)</span></label>
+      <div className="cc-layout">
+        <div className="cc-form-card">
+          <h3>Class Details</h3>
+          {error && <div className="auth-error">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="cc-form-group">
+              <label>Subject</label>
               <input
                 type="text"
-                name="section"
-                value={form.section}
+                name="subject"
+                value={form.subject}
                 onChange={handleChange}
-                placeholder="e.g. A"
+                placeholder="e.g. Web Systems and Technologies"
+                required
               />
             </div>
-          </div>
-          <p className="form-hint">Students join using the class code shown after creation.</p>
 
-          <div className="form-actions">
-            <Button type="button" variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
-            <Button type="submit" variant="primary" disabled={submitting}>
-              {submitting ? 'Creating...' : 'Create Class'}
-            </Button>
+            <div className="cc-form-group">
+              <label>Program / Course</label>
+              <select
+                name="program"
+                value={form.program}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select a program...</option>
+                {PROGRAMS.map(p => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+              <p className="cc-form-hint">Used for organizing and filtering students.</p>
+            </div>
+
+            <div className="cc-form-row-2">
+              <div className="cc-form-group">
+                <label>Year Level <span className="cc-optional"></span></label>
+                <select name="yearLevel" value={form.yearLevel} onChange={handleChange}>
+                  <option value="">All year levels</option>
+                  {YEAR_LEVELS.map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+                <p className="cc-form-hint"></p>
+              </div>
+              <div className="cc-form-group">
+                <label>Academic Year</label>
+                <input type="text" name="academicYear" value={form.academicYear} onChange={handleChange} placeholder="e.g. AY 2026-2027" required />
+              </div>
+            </div>
+
+            <div className="cc-form-row-2">
+              <div className="cc-form-group">
+                <label>Semester</label>
+                <select name="semester" value={form.semester} onChange={handleChange} required>
+                  <option value="">Select semester</option>
+                  {SEMESTERS.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="cc-form-group">
+                <label>Section <span className="cc-optional"></span></label>
+                <input
+                  type="text"
+                  name="section"
+                  value={form.section}
+                  onChange={handleChange}
+                  placeholder="e.g. A"
+                />
+              </div>
+            </div>
+
+            <div className="cc-form-actions">
+              <Button type="button" variant="secondary" onClick={() => navigate(-1)}>Cancel</Button>
+              <Button type="submit" variant="primary" disabled={submitting}>
+                {submitting ? 'Creating...' : 'Create Class'}
+              </Button>
+            </div>
+          </form>
+        </div>
+
+        <div className="cc-sidebar">
+          <div className="cc-info-card">
+            <h4>Summary</h4>
+            <div className="cc-summary">
+              <div className="cc-stat-row">
+                <span className="cc-stat-label">Subject</span>
+                <span className="cc-stat-value">{form.subject || '—'}</span>
+              </div>
+              <div className="cc-stat-row">
+                <span className="cc-stat-label">Program</span>
+                <span className="cc-stat-value">{form.program || '—'}</span>
+              </div>
+              <div className="cc-stat-row">
+                <span className="cc-stat-label">Year Level</span>
+                <span className="cc-stat-value">{form.yearLevel || 'All years'}</span>
+              </div>
+              <div className="cc-stat-row">
+                <span className="cc-stat-label">Academic Year</span>
+                <span className="cc-stat-value">{form.academicYear || '—'}</span>
+              </div>
+              <div className="cc-stat-row">
+                <span className="cc-stat-label">Semester</span>
+                <span className="cc-stat-value">{form.semester || '—'}</span>
+              </div>
+              <div className="cc-stat-row">
+                <span className="cc-stat-label">Section</span>
+                <span className="cc-stat-value">{form.section || 'General'}</span>
+              </div>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

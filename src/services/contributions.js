@@ -27,12 +27,3 @@ export async function fetchProfessorContributions(professorId) {
   return data || [];
 }
 
-export async function upsertContribution(contribution) {
-  const { data, error } = await supabase
-    .from('contributions')
-    .upsert(contribution, { onConflict: 'user_id,class_id' })
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-}

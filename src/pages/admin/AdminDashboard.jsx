@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar';
 import { useUser } from '../../data/UserContext';
 import { fetchAllProfiles } from '../../services/profiles';
 import studentIcon from '../../assets/student.png';
+import userIcon from '../../assets/user.png';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
@@ -25,21 +26,14 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <Navbar title="Admin Dashboard" subtitle="Manage users, projects, and system settings." user={user} />
+      <Navbar title="Admin Dashboard" subtitle="Manage users, projects, and system settings" user={user} />
 
       <div className="admin-stats">
         <div className="stat-card">
-          <div className="stat-icon blue">☰</div>
+          <div className="stat-icon blue"><img src={userIcon} alt="Users" style={{ width: 16, height: 16 }} /></div>
           <div>
             <strong>{totalUsers}</strong>
             <span>Total Users</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon yellow">⏳</div>
-          <div>
-            <strong>{pendingVerification}</strong>
-            <span>Pending Verification</span>
           </div>
         </div>
         <div className="stat-card">

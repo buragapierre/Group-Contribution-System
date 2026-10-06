@@ -1,0 +1,118 @@
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notif-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.notif-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.notif-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.notif-red { background: var(--danger, #ef4444); }
+.notif-yellow { background: var(--warning, #f59e0b); }
+.notif-blue { background: #3b82f6; }
+.notif-green { background: #22c55e; }
+.notif-purple { background: var(--primary); }
+
+.notif-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.notif-top strong {
+  font-size: 13px;
+}
+
+.notif-tag {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.notif-tag-red { background: var(--danger-bg, #fee2e2); color: var(--danger, #ef4444); }
+.notif-tag-yellow { background: var(--warning-bg, #fef3c7); color: #b45309; }
+.notif-tag-blue { background: var(--blue, #dbeafe); color: #3b82f6; }
+.notif-tag-green { background: var(--green, #dcfce7); color: #22c55e; }
+.notif-tag-purple { background: var(--primary-bg); color: var(--primary); }
+
+.notif-info p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+}
+
+.notif-time {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.notif-go {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.notif-card:hover .notif-go {
+  color: var(--primary);
+}
+
+.notif-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-white);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.notif-empty-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--green, #dcfce7);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  color: #22c55e;
+  margin: 0 auto 16px;
+}
+
+.notif-empty h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.notif-empty p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}

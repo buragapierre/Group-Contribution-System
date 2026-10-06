@@ -52,7 +52,7 @@ export default function Projects() {
 
   return (
     <div>
-      <Navbar title="Projects" subtitle="Manage your course projects." user={user} />
+      <Navbar title="Projects" subtitle="Manage your course projects" user={user} />
 
       <div className="section-title" style={{ marginBottom: 20 }}>
         <h2>All Projects</h2>

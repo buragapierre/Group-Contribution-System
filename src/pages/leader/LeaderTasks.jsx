@@ -9,12 +9,23 @@ import { fetchTasksByGroup } from '../../services/tasks';
 import { fetchGroupMembers } from '../../services/groups';
 import './LeaderTasks.css';
 
+const FILTERS = [
+  { label: 'All', value: 'all' },
+  { label: 'Assigned', value: 'assigned' },
+  { label: 'In Progress', value: 'in_progress' },
+  { label: 'Submitted', value: 'submitted' },
+  { label: 'Under Review', value: 'under_review' },
+  { label: 'Verified', value: 'verified' },
+  { label: 'Needs Revision', value: 'needs_revision' },
+];
+
 export default function LeaderTasks() {
   const { currentUser } = useUser();
   const group = useLeaderGroup(currentUser);
   const [groupTasks, setGroupTasks] = useState([]);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('all');
 
   useEffect(() => {
     if (!group) return;
@@ -34,6 +45,10 @@ export default function LeaderTasks() {
 
   if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
+
+  const filteredTasks = activeFilter === 'all'
+    ? groupTasks
+    : groupTasks.filter(t => t.status === activeFilter);
 
   return (
     <div>
@@ -59,8 +74,31 @@ export default function LeaderTasks() {
           </Link>
         </div>
       ) : (
+        <>
+          <div className="lt-filters">
+            {FILTERS.map(f => (
+              <button
+                key={f.value}
+                className={`lt-filter-btn ${activeFilter === f.value ? 'active' : ''}`}
+                onClick={() => setActiveFilter(f.value)}
+              >
+                {f.label}
+                <span className="lt-filter-count">
+                  {f.value === 'all' ? groupTasks.length : groupTasks.filter(t => t.status === f.value).length}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {filteredTasks.length === 0 ? (
+            <div className="lt-empty">
+              <span className="lt-empty-icon">✓</span>
+              <h3>No tasks found</h3>
+              <p>No tasks with status "{FILTERS.find(f => f.value === activeFilter)?.label}".</p>
+            </div>
+          ) : (
         <div className="lt-list">
-          {groupTasks.map(t => {
+          {filteredTasks.map(t => {
             const assignedUser = members.find(u => u.id === t.assigned_to);
             return (
               <Link to={`/leader/tasks/${t.id}`} key={t.id} className="lt-card">
@@ -95,6 +133,8 @@ export default function LeaderTasks() {
             );
           })}
         </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -8,7 +8,7 @@ export default function StudentProfile() {
 
   return (
     <div>
-      <Navbar title="My Profile" subtitle="Your student information and academic details." user={user} />
+      <Navbar title="My Profile" subtitle="Your student information and academic details" user={user} />
 
       <div className="profile-container">
         <div className="profile-card full-width">

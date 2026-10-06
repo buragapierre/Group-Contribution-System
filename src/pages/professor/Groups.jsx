@@ -48,7 +48,7 @@ export default function Groups() {
 
   return (
     <div>
-      <Navbar title="Groups" subtitle="Manage student groups across all classes." user={user} />
+      <Navbar title="Groups" subtitle="Manage student groups across all classes" user={user} />
 
       <div className="groups-stats">
         <div className="groups-stat-card">

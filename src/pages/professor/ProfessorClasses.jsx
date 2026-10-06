@@ -50,7 +50,7 @@ export default function ProfessorClasses() {
 
   return (
     <div>
-      <Navbar title="My Classes" subtitle="Manage your classes, projects, and groups." user={user} />
+      <Navbar title="My Classes" subtitle="Manage your classes, projects, and groups" user={user} />
 
       <div className="section-title" style={{ marginBottom: 20 }}>
         <h2>All Classes</h2>

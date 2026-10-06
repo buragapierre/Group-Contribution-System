@@ -41,7 +41,7 @@ export default function StudentMyClasses() {
 
   return (
     <div>
-      <Navbar title="My Classes" subtitle="All subjects you are enrolled in this semester." user={user} />
+      <Navbar title="My Classes" subtitle="All subjects you are enrolled in this semester" user={user} />
 
       <div className="my-classes-header">
         <Button variant="primary" onClick={() => setShowJoinModal(true)}>+ Join Class</Button>

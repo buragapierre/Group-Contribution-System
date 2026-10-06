@@ -122,10 +122,10 @@ export default function Login() {
       <div className="auth-card">
         <div className="logo">
           <span className="logo-box">▦</span>
-          <span>SYNORA.</span>
+          <span>SYNORA</span>
         </div>
-        <h1>Welcome Back<span>.</span></h1>
-        <p className="subtitle">Sign in to your account to continue.</p>
+        <h1>Welcome Back</h1>
+        <p className="subtitle">Sign in to your account to continue</p>
 
         {error && <div className="auth-error">{error}</div>}
         {lockedUntil && (

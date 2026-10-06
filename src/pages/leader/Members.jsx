@@ -7,6 +7,7 @@ import { useLeaderGroup } from '../../data/useLeaderGroup';
 import { fetchGroupMembers, fetchGroupMemberIds, addGroupMember, removeGroupMember } from '../../services/groups';
 import { fetchContributionsByClass } from '../../services/contributions';
 import { fetchAllProfiles } from '../../services/profiles';
+import { logActivity } from '../../services/activities';
 import './Members.css';
 
 export default function Members() {
@@ -53,6 +54,13 @@ export default function Members() {
     if (!newMember) return;
     try {
       await addGroupMember(group.id, newMember);
+      const student = availableStudents.find(s => s.id === newMember);
+      await logActivity({
+        user_id: currentUser.id,
+        type: 'member_added',
+        message: `You added ${student?.name || 'a member'} to the group`,
+        timestamp: new Date().toISOString(),
+      });
       setNewMember('');
       setShowAdd(false);
       setLoading(true);
@@ -66,6 +74,13 @@ export default function Members() {
     if (!confirm('Remove this member from the group?')) return;
     try {
       await removeGroupMember(group.id, userId);
+      const member = memberData.find(m => m.id === userId);
+      await logActivity({
+        user_id: currentUser.id,
+        type: 'member_removed',
+        message: `You removed ${member?.name || 'a member'} from the group`,
+        timestamp: new Date().toISOString(),
+      });
       setLoading(true);
       refreshMembers();
     } catch (err) {

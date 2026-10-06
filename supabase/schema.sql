@@ -249,6 +249,29 @@ CREATE POLICY "Anyone can read activities" ON activities FOR SELECT USING (true)
 CREATE POLICY "System can insert activities" ON activities FOR INSERT WITH CHECK (true);
 
 -- ============================================
+-- STORAGE: submission files
+-- ============================================
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('submissions', 'submissions', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- Users can upload into their own folder: task_<id>/<user_id>/<file>
+CREATE POLICY "Users can upload own submission files"
+ON storage.objects FOR INSERT TO authenticated
+WITH CHECK (
+  bucket_id = 'submissions'
+  AND (string_to_array(name, '/'))[2] = auth.uid()::text
+);
+
+-- Users can read their own submission files (leaders/professors via backend signed URLs)
+CREATE POLICY "Users can read own submission files"
+ON storage.objects FOR SELECT TO authenticated
+USING (
+  bucket_id = 'submissions'
+  AND (string_to_array(name, '/'))[2] = auth.uid()::text
+);
+
+-- ============================================
 -- AUTH TRIGGER: Auto-create profile on signup
 -- ============================================
 CREATE OR REPLACE FUNCTION public.handle_new_user()

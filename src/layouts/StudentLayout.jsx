@@ -5,15 +5,23 @@ import groupIcon from '../assets/group.png';
 import memberIcon from '../assets/member.png';
 import dashboardIcon from '../assets/dashboard.png';
 import classesIcon from '../assets/classes.png';
+import taskIcon from '../assets/task.png';
+import evaluationIcon from '../assets/evaluation.png';
+import userIcon from '../assets/user.png';
+import submissionIcon from '../assets/submission.png';
+import activityIcon from '../assets/activity.png';
 
 const studentLinks = [
   { to: '/student', icon: dashboardIcon, label: 'Dashboard', end: true },
   { to: '/student/classes', icon: classesIcon, label: 'My Classes' },
   { to: '/student/group', icon: groupIcon, label: 'My Group' },
-  { to: '/student/tasks', icon: '✓', label: 'My Tasks' },
-  { to: '/student/activity', icon: '◷', label: 'Activity' },
-  { to: '/student/peer-evaluation', icon: '☆', label: 'Peer Evaluation' },
-  { to: '/student/profile', icon: '◎', label: 'My Profile' },
+  { to: '/student/tasks', icon: taskIcon, label: 'My Tasks' },
+];
+
+const studentMoreLinks = [
+  { to: '/student/activity', icon: activityIcon, label: 'Activity' },
+  { to: '/student/peer-evaluation', icon: evaluationIcon, label: 'Peer Evaluation' },
+  { to: '/student/profile', icon: userIcon, label: 'My Profile' },
 ];
 
 export default function StudentLayout() {
@@ -49,8 +57,8 @@ export default function StudentLayout() {
 
   const leaderTools = activeGroup ? [
     { to: `/leader?group=${activeGroupId}`, icon: dashboardIcon, label: 'Overview' },
-    { to: `/leader/tasks?group=${activeGroupId}`, icon: '✓', label: 'Tasks' },
-    { to: `/leader/submissions?group=${activeGroupId}`, icon: '◎', label: 'Submissions' },
+    { to: `/leader/tasks?group=${activeGroupId}`, icon: taskIcon, label: 'Tasks' },
+    { to: `/leader/submissions?group=${activeGroupId}`, icon: submissionIcon, label: 'Submissions' },
     { to: `/leader/members?group=${activeGroupId}`, icon: memberIcon, label: 'Members' },
   ] : [];
 
@@ -62,6 +70,7 @@ export default function StudentLayout() {
     <div className="app">
       <Sidebar
         links={studentLinks}
+        moreLinks={studentMoreLinks}
         role="student"
         leadershipLinks={leaderLinks}
         leadershipTools={leaderTools}

@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
+import Button from '../../components/Button';
 import { fetchProfessorContributions } from '../../services/contributions';
 import { fetchProfessorProjects } from '../../services/projects';
 import { fetchProfessorTasks } from '../../services/tasks';
 import { fetchClasses } from '../../services/classes';
 import { useUser } from '../../data/UserContext';
+import { exportContributionsPdf } from '../../lib/api';
 import './Reports.css';
 
 export default function Reports() {
   const { currentUser } = useUser();
+  const [exportingId, setExportingId] = useState(null);
   const [professorClasses, setProfessorClasses] = useState([]);
   const [professorProjects, setProfessorProjects] = useState([]);
   const [professorTasks, setProfessorTasks] = useState([]);
@@ -33,6 +36,17 @@ export default function Reports() {
     }).catch(() => setLoading(false));
   }, [currentUser]);
 
+  const handleExport = async (classId) => {
+    setExportingId(classId);
+    try {
+      await exportContributionsPdf(classId);
+    } catch (err) {
+      alert(err.message || 'Failed to export PDF.');
+    } finally {
+      setExportingId(null);
+    }
+  };
+
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
   const totalTasks = professorTasks.length;
@@ -43,7 +57,7 @@ export default function Reports() {
 
   return (
     <div>
-      <Navbar title="Reports" subtitle="View overall project statistics and reports." user={user} />
+      <Navbar title="Reports" subtitle="View overall project statistics and reports" user={user} />
 
       <div className="reports-stats">
         <div className="report-stat">
@@ -71,7 +85,19 @@ export default function Reports() {
           if (classProjects.length === 0) return null;
           return (
             <div key={cls.id} className="report-class-group">
-              <h4 className="report-class-title">{cls.subject} <span>{cls.section || 'General'} · {cls.semester}</span></h4>
+              <h4 className="report-class-title">
+                {cls.subject} <span>{cls.section || 'General'} · {cls.semester}</span>
+              </h4>
+              <div style={{ margin: '0 0 10px' }}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={exportingId === cls.id}
+                  onClick={() => handleExport(cls.id)}
+                >
+                  {exportingId === cls.id ? 'Exporting...' : 'Export PDF'}
+                </Button>
+              </div>
               {classProjects.map(p => (
                 <div key={p.id} className="report-row">
                   <div className="report-project-info">

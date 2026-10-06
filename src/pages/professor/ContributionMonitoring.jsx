@@ -37,7 +37,7 @@ export default function ContributionMonitoring() {
 
   return (
     <div>
-      <Navbar title="Contribution Monitoring" subtitle="Track student task completion and contribution percentages." user={user} />
+      <Navbar title="Contribution Monitoring" subtitle="Track student task completion and contribution percentages" user={user} />
 
       <div className="table-container">
         <table>

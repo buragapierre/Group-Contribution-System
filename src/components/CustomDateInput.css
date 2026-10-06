@@ -1,0 +1,142 @@
+.cd-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.cd-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cd-button:hover {
+  border-color: var(--primary-light);
+}
+
+.cd-button.cd-open {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.cd-label {
+  flex: 1;
+  text-align: left;
+}
+
+.cd-button.cd-empty .cd-label {
+  color: var(--text-muted);
+}
+
+.cd-cal-icon {
+  color: var(--text-muted);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.cd-button.cd-open .cd-cal-icon {
+  color: var(--primary);
+}
+
+.cd-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  width: 264px;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 12px;
+}
+
+.cd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cd-head strong {
+  font-size: 12.5px;
+}
+
+.cd-nav {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: 0.15s;
+}
+
+.cd-nav:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.cd-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cd-dow span {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px 0;
+}
+
+.cd-day {
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--text-primary);
+  height: 30px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: 0.12s;
+}
+
+.cd-day:hover:not(:disabled) {
+  background: var(--primary-bg);
+}
+
+.cd-day.cd-today {
+  border: 1px solid var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.cd-day.cd-sel {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+}
+
+.cd-day:disabled {
+  color: var(--border);
+  cursor: not-allowed;
+}
+
+.cd-disabled .cd-button {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

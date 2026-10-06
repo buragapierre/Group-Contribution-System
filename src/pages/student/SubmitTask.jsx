@@ -6,6 +6,9 @@ import StatusBadge from '../../components/StatusBadge';
 import { useUser } from '../../data/UserContext';
 import { fetchTaskById, updateTaskStatus } from '../../services/tasks';
 import { createSubmission } from '../../services/submissions';
+import { submitTaskViaApi } from '../../lib/api';
+import { uploadSubmissionFiles } from '../../services/storage';
+import { logActivity } from '../../services/activities';
 import './SubmitTask.css';
 
 export default function SubmitTask() {
@@ -37,15 +40,25 @@ export default function SubmitTask() {
     setSubmitting(true);
     setError('');
     try {
-      const fileNames = files.map(f => f.name);
-      await createSubmission({
-        task_id: parseInt(id),
+      const uploaded = await uploadSubmissionFiles(parseInt(id), currentUser.id, files);
+      try {
+        await submitTaskViaApi(parseInt(id), uploaded, comment);
+      } catch {
+        await createSubmission({
+          task_id: parseInt(id),
+          user_id: currentUser.id,
+          files: uploaded,
+          comment,
+          status: 'submitted',
+        });
+        await updateTaskStatus(parseInt(id), 'submitted');
+      }
+      await logActivity({
         user_id: currentUser.id,
-        files: fileNames,
-        comment,
-        status: 'submitted',
+        type: 'task_submitted',
+        message: `You submitted task "${task.title}"`,
+        timestamp: new Date().toISOString(),
       });
-      await updateTaskStatus(parseInt(id), 'submitted');
       navigate(`/student/tasks/${id}`);
     } catch (err) {
       setError(err.message || 'Failed to submit task.');
@@ -66,7 +79,7 @@ export default function SubmitTask() {
 
   return (
     <div>
-      <Navbar title="Submit Task" subtitle="Upload your work and submit for review." user={user} />
+      <Navbar title="Submit Task" subtitle="Upload your work and submit for review" user={user} />
 
       <Link to={`/student/tasks/${id}`} className="back-link">← Back to Task</Link>
 

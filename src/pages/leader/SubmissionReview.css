@@ -164,6 +164,23 @@
   color: var(--text-secondary);
 }
 
+.sr-file-view {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-light);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.sr-file-view:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
 .sr-actions {
   display: flex;
   gap: 8px;

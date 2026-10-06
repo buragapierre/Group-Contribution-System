@@ -58,7 +58,7 @@ export default function MyGroup() {
   if (!loading && groups.length === 0) {
     return (
       <div>
-        <Navbar title="My Groups" subtitle="All groups you are part of." user={user} />
+        <Navbar title="My Groups" subtitle="All groups you are part of" user={user} />
         <div className="my-group-empty">
           <span className="mg-empty-icon"><img src={groupIcon} alt="Group" /></span>
           <h3>No Groups Yet</h3>
@@ -70,7 +70,7 @@ export default function MyGroup() {
 
   return (
     <div>
-      <Navbar title="My Groups" subtitle={`${groups.length} group(s) across your classes.`} user={user} />
+      <Navbar title="My Groups" subtitle={`${groups.length} group(s) across your classes`} user={user} />
 
       {groups.map((g) => {
         const myContribution = g.members.find(m => m.id === currentUser?.id);

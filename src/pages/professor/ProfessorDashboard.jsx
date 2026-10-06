@@ -8,6 +8,8 @@ import { useUser } from '../../data/UserContext';
 import groupIcon from '../../assets/group.png';
 import studentIcon from '../../assets/student.png';
 import projectIcon from '../../assets/project.png';
+import activityIcon from '../../assets/activity.png';
+import averageIcon from '../../assets/average.png';
 import './ProfessorDashboard.css';
 
 export default function ProfessorDashboard() {
@@ -47,12 +49,12 @@ export default function ProfessorDashboard() {
 
   return (
     <div>
-      <Navbar title="Professor Dashboard" subtitle="Create projects, organize groups, and monitor progress." user={user} />
+      <Navbar title="Professor Dashboard" subtitle="Create projects, organize groups, and monitor progress" user={user} />
       <div className="prof-stats">
         <div className="stat-card"><div className="stat-icon purple"><img src={projectIcon} alt="Projects" style={{ width: 16, height: 16 }} /></div><div><strong>{professorProjects.length}</strong><span>Active Projects</span></div></div>
         <div className="stat-card"><div className="stat-icon blue"><img src={groupIcon} alt="Groups" style={{ width: 16, height: 16 }} /></div><div><strong>{professorGroups.length}</strong><span>Groups</span></div></div>
         <div className="stat-card"><div className="stat-icon green"><img src={studentIcon} alt="Students" style={{ width: 16, height: 16 }} /></div><div><strong>{totalStudents}</strong><span>Students</span></div></div>
-        <div className="stat-card"><div className="stat-icon yellow">◷</div><div><strong>{pendingTasks}</strong><span>Pending Reviews</span></div></div>
+        <div className="stat-card"><div className="stat-icon yellow"><img src={activityIcon} alt="Pending" style={{ width: 16, height: 16 }} /></div><div><strong>{pendingTasks}</strong><span>Pending Reviews</span></div></div>
       </div>
 
       <div className="prof-grid">
@@ -72,9 +74,9 @@ export default function ProfessorDashboard() {
           <div className="section-title"><h2>Next Steps</h2></div>
           <div className="prof-group-list">
             <Link to="/professor/classes/create" className="prof-group-row"><div className="group-icon-sm">+</div><div><h4>Create a class</h4><p>Start by setting up your course and section.</p></div></Link>
-            <Link to="/professor/classes" className="prof-group-row"><div className="group-icon-sm">▤</div><div><h4>Create a project</h4><p>Go to your class to create a project.</p></div></Link>
+            <Link to="/professor/classes" className="prof-group-row"><div className="group-icon-sm"><img src={projectIcon} alt="Projects" style={{ width: 14, height: 14 }} /></div><div><h4>Create a project</h4><p>Go to your class to create a project.</p></div></Link>
             <Link to="/professor/groups" className="prof-group-row"><div className="group-icon-sm"><img src={groupIcon} alt="Groups" style={{ width: 14, height: 14 }} /></div><div><h4>Organize groups</h4><p>Assign members and review group progress.</p></div></Link>
-            <Link to="/professor/contribution" className="prof-group-row"><div className="group-icon-sm">◉</div><div><h4>Review contributions</h4><p>See each student's task performance.</p></div></Link>
+            <Link to="/professor/contribution" className="prof-group-row"><div className="group-icon-sm"><img src={averageIcon} alt="Contributions" style={{ width: 14, height: 14 }} /></div><div><h4>Review contributions</h4><p>See each student's task performance.</p></div></Link>
           </div>
         </div>
       </div>

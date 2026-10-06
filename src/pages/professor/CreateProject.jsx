@@ -59,7 +59,7 @@ export default function CreateProject() {
 
   return (
     <div>
-      <Navbar title="Create Project" subtitle={selectedClass ? `Add a project to ${selectedClass.subject}` : "Set up a new project for your students."} user={user} />
+      <Navbar title="Create Project" subtitle={selectedClass ? `Add a project to ${selectedClass.subject}` : "Set up a new project for your students"} user={user} />
 
       {selectedClass && (
         <div className="class-context-bar">

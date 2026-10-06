@@ -11,10 +11,6 @@
   margin: 0 0 6px;
 }
 
-.topbar h1 span {
-  color: var(--primary);
-}
-
 .topbar p {
   font-size: 11px;
   color: var(--text-muted);
@@ -53,6 +49,22 @@
   border-radius: 50%;
   right: 0;
   top: 1px;
+}
+
+.notif-badge {
+  position: absolute;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--danger, #ef4444);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  right: -4px;
+  top: -4px;
 }
 
 .user {

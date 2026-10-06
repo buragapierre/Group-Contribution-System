@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import StatusBadge from '../../components/StatusBadge';
+import TimingBadge from '../../components/TimingBadge';
 import { useUser } from '../../data/UserContext';
 import { useLeaderGroup } from '../../data/useLeaderGroup';
-import { fetchSubmissionsByGroup } from '../../services/submissions';
+import submissionIcon from '../../assets/submission.png';
+import { fetchSubmissionsByGroup, updateSubmissionStatus } from '../../services/submissions';
 import { fetchGroupMembers } from '../../services/groups';
-import { fetchTasksByGroup } from '../../services/tasks';
+import { fetchTasksByGroup, updateTaskStatus } from '../../services/tasks';
+import { logActivity } from '../../services/activities';
+import { recalculateContributions, reviewSubmissionViaApi, getSubmissionFileUrl } from '../../lib/api';
 import './SubmissionReview.css';
 
 export default function SubmissionReview() {
@@ -36,8 +40,47 @@ export default function SubmissionReview() {
       .catch(() => setLoading(false));
   }, [group]);
 
-  const handleAction = (id, action) => {
+  const handleAction = async (id, action) => {
     setReviewedIds(prev => ({ ...prev, [id]: action }));
+    try {
+      let classId = null;
+      try {
+        const result = await reviewSubmissionViaApi(id, action);
+        classId = result.class_id;
+      } catch {
+        await updateSubmissionStatus(id, action);
+        const taskId = enrichedSubmissions.find(s => s.id === id)?.task?.id;
+        if (taskId) {
+          const fallbackStatus = action === 'verified' ? 'verified' : action === 'needs_revision' ? 'in_progress' : 'assigned';
+          await updateTaskStatus(taskId, fallbackStatus);
+        }
+        classId = enrichedSubmissions.find(s => s.id === id)?.task?.class_id;
+      }
+      const submission = enrichedSubmissions.find(s => s.id === id);
+      await logActivity({
+        user_id: currentUser.id,
+        type: action === 'verified' ? 'task_verified' : 'revision_requested',
+        message: `You ${action === 'verified' ? 'verified' : action === 'rejected' ? 'rejected' : 'requested revision for'} "${submission?.task?.title || 'submission'}"`,
+        timestamp: new Date().toISOString(),
+      });
+      if (classId) {
+        recalculateContributions(classId).catch(err =>
+          console.error('Failed to recalculate contributions:', err)
+        );
+      }
+    } catch (err) {
+      console.error('Failed to update submission:', err);
+    }
+  };
+
+  const openFile = async (submissionId, file) => {
+    if (typeof file === 'string' || !file?.path) return;
+    try {
+      const url = await getSubmissionFileUrl(submissionId, file.path);
+      window.open(url, '_blank', 'noopener');
+    } catch (err) {
+      alert(err.message || 'Could not open file.');
+    }
   };
 
   if (!group) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No group selected.</div>;
@@ -54,7 +97,7 @@ export default function SubmissionReview() {
 
       {enrichedSubmissions.length === 0 ? (
         <div className="sr-empty">
-          <span className="sr-empty-icon">📤</span>
+          <span className="sr-empty-icon"><img src={submissionIcon} alt="" style={{ width: 40, height: 40, opacity: 0.4 }} /></span>
           <h3>No submissions yet</h3>
           <p>When group members submit their tasks, they will appear here for review.</p>
         </div>
@@ -74,7 +117,12 @@ export default function SubmissionReview() {
                     </span>
                   </div>
                 </div>
-                <StatusBadge status={reviewedIds[s.id] || s.status} />
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  {s.task?.deadline && (
+                    <TimingBadge submittedAt={s.submitted_at} deadline={s.task.deadline} />
+                  )}
+                  <StatusBadge status={reviewedIds[s.id] || s.status} />
+                </div>
               </div>
 
               <div className="sr-task-section">
@@ -85,12 +133,21 @@ export default function SubmissionReview() {
               <div className="sr-files">
                 <span className="sr-files-label">Attached Files</span>
                 <div className="sr-files-list">
-                  {s.files.map((f, i) => (
-                    <div key={i} className="sr-file">
-                      <span className="sr-file-icon">📄</span>
-                      <span className="sr-file-name">{f}</span>
-                    </div>
-                  ))}
+                  {(s.files || []).map((f, i) => {
+                    const name = typeof f === 'string' ? f : f?.name || 'File';
+                    const viewable = typeof f !== 'string' && f?.path;
+                    return (
+                      <div key={i} className="sr-file">
+                        <span className="sr-file-icon">📄</span>
+                        <span className="sr-file-name">{name}</span>
+                        {viewable && (
+                          <button type="button" className="sr-file-view" onClick={() => openFile(s.id, f)}>
+                            View
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

@@ -40,7 +40,7 @@ export default function Users() {
 
   return (
     <div>
-      <Navbar title="User Management" subtitle="View and manage all system users." user={user} />
+      <Navbar title="User Management" subtitle="View and manage all system users" user={user} />
 
       <div className="users-toolbar">
         <input

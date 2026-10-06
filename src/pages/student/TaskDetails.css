@@ -109,6 +109,25 @@
   background: var(--bg);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.file-tag-view {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-light);
+  border-radius: 999px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.file-tag-view:hover {
+  background: var(--primary);
+  color: #fff;
 }
 
 .td-sidebar {

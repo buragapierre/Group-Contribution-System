@@ -37,7 +37,7 @@ export default function PeerEvaluation() {
 
   return (
     <div>
-      <Navbar title="Peer Evaluation" subtitle="Rate your group members' contributions." user={user} />
+      <Navbar title="Peer Evaluation" subtitle="Rate your group members' contributions" user={user} />
 
       {peerOptions.length === 0 ? (
         <div className="peer-empty">

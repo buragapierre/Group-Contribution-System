@@ -9,6 +9,8 @@ import { fetchTasksByClass } from '../../services/tasks';
 import { fetchContributionsByClass } from '../../services/contributions';
 import groupIcon from '../../assets/group.png';
 import projectIcon from '../../assets/project.png';
+import taskIcon from '../../assets/task.png';
+import averageIcon from '../../assets/average.png';
 import './StudentClassDetail.css';
 
 export default function StudentClassDetail() {
@@ -119,9 +121,9 @@ export default function StudentClassDetail() {
       )}
 
       <div className="scd-stats">
-        <div className="stat-card"><div className="stat-icon blue">✓</div><div><strong>{completedTasks}/{myTasks.length}</strong><span>My Tasks Done</span></div></div>
+        <div className="stat-card"><div className="stat-icon blue"><img src={taskIcon} alt="Tasks" style={{ width: 16, height: 16 }} /></div><div><strong>{completedTasks}/{myTasks.length}</strong><span>My Tasks Done</span></div></div>
         <div className="stat-card"><div className="stat-icon yellow">⏳</div><div><strong>{dueSoon.length}</strong><span>Due Soon</span></div></div>
-        <div className="stat-card"><div className="stat-icon green">◉</div><div><strong>{myContribution?.contribution_percent || 0}%</strong><span>My Contribution</span></div></div>
+        <div className="stat-card"><div className="stat-icon green"><img src={averageIcon} alt="Contribution" style={{ width: 16, height: 16 }} /></div><div><strong>{myContribution?.contribution_percent || 0}%</strong><span>My Contribution</span></div></div>
         <div className="stat-card"><div className="stat-icon purple"><img src={projectIcon} alt="Projects" style={{ width: 16, height: 16 }} /></div><div><strong>{classProjects.length}</strong><span>Projects</span></div></div>
       </div>
 

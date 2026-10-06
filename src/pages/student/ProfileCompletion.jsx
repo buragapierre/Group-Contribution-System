@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import { useUser } from '../../data/UserContext';
 import { updateProfile } from '../../services/profiles';
 import { PROGRAMS } from '../../lib/constants';
+import userIcon from '../../assets/user.png';
 
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year'];
 
@@ -35,11 +36,11 @@ export default function ProfileCompletion() {
 
   return (
     <div>
-      <Navbar title="Complete Your Profile" subtitle="Please fill in your academic details to continue." user={user} />
+      <Navbar title="Complete Your Profile" subtitle="Please fill in your academic details to continue" user={user} />
 
       <div className="profile-completion-card">
         <div className="pc-welcome">
-          <span className="pc-icon">◎</span>
+          <span className="pc-icon"><img src={userIcon} alt="Profile" style={{ width: 48, height: 48 }} /></span>
           <h2>Welcome, {currentUser?.name}!</h2>
           <p>Complete your profile so we can set up your student experience.</p>
         </div>

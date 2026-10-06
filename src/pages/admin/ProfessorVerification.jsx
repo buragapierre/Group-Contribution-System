@@ -46,7 +46,7 @@ export default function ProfessorVerification() {
 
   return (
     <div>
-      <Navbar title="Professor Verification" subtitle="Review and verify professor account requests." user={user} />
+      <Navbar title="Professor Verification" subtitle="Review and verify professor account requests" user={user} />
 
       {pendingUsers.length === 0 ? (
         <div className="empty-state">

@@ -25,7 +25,7 @@ export default function MyContribution() {
 
   return (
     <div>
-      <Navbar title="My Contribution" subtitle="Your task completion and contribution statistics." user={user} />
+      <Navbar title="My Contribution" subtitle="Your task completion and contribution statistics" user={user} />
 
       <div className="contribution-page">
         <div className="cp-overview">

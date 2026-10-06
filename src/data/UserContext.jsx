@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import supabase from '../lib/supabase';
 import { fetchStudentClasses, fetchClasses } from '../services/classes';
 import { fetchLeaderGroups, fetchMemberGroups } from '../services/groups';
+import { verifySessionViaApi } from '../lib/api';
 
 const UserContext = createContext(null);
 
@@ -56,6 +57,24 @@ export function UserProvider({ children }) {
 
   const fetchAndEnrichUser = async (authUser) => {
     try {
+      // Verify the session with the backend when it is reachable.
+      // A 401 means the token is invalid -> sign out.
+      // A network failure means the backend is down -> fall back to Supabase.
+      try {
+        const { profile: verified } = await verifySessionViaApi();
+        if (verified) {
+          await enrichAndSetUser(verified);
+          return;
+        }
+      } catch (verifyErr) {
+        if (verifyErr.status === 401 || verifyErr.status === 403) {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          setLoading(false);
+          return;
+        }
+      }
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
@@ -97,6 +116,21 @@ export function UserProvider({ children }) {
   }, []);
 
   const login = async (authUser) => {
+    try {
+      const { profile: verified } = await verifySessionViaApi();
+      if (verified) {
+        await enrichAndSetUser(verified);
+        return;
+      }
+    } catch (verifyErr) {
+      if (verifyErr.status === 401 || verifyErr.status === 403) {
+        await supabase.auth.signOut();
+        setCurrentUser(null);
+        return;
+      }
+      // Backend unreachable — fall back to direct profile fetch below
+    }
+
     const { data: profile } = await supabase
       .from('profiles')
       .select('*')

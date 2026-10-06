@@ -15,7 +15,7 @@ function NavigationLinks({ links, label }) {
   );
 }
 
-export default function Sidebar({ links, role, leadershipLinks = [], leadershipTools = [], leadershipLabel, leadershipContext }) {
+export default function Sidebar({ links, role, moreLinks = [], leadershipLinks = [], leadershipTools = [], leadershipLabel, leadershipContext }) {
   const { logout } = useUser();
 
   const handleLogout = (e) => {
@@ -31,6 +31,12 @@ export default function Sidebar({ links, role, leadershipLinks = [], leadershipT
       </div>
       <p className="sidebar-role">{role === 'leader' ? 'Group management' : role === 'professor' ? 'Teaching workspace' : role === 'admin' ? 'Administration' : 'My workspace'}</p>
       <NavigationLinks links={links} label="Main navigation" />
+      {moreLinks.length > 0 && (
+        <details className="sidebar-more">
+          <summary>More</summary>
+          <NavigationLinks links={moreLinks} label="More navigation" />
+        </details>
+      )}
       {leadershipLinks.length > 0 && (
         <div className="sidebar-section">
           <p className="sidebar-role">{leadershipLabel || 'Leading'}</p>

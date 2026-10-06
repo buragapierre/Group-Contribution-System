@@ -4,13 +4,15 @@ import { useUser } from '../data/UserContext';
 import groupIcon from '../assets/group.png';
 import dashboardIcon from '../assets/dashboard.png';
 import classesIcon from '../assets/classes.png';
+import averageIcon from '../assets/average.png';
+import projectIcon from '../assets/project.png';
 
 const professorLinks = [
   { to: '/professor', icon: dashboardIcon, label: 'Dashboard', end: true },
   { to: '/professor/classes', icon: classesIcon, label: 'Classes' },
   { to: '/professor/groups', icon: groupIcon, label: 'Groups' },
-  { to: '/professor/contribution', icon: '◉', label: 'Contribution' },
-  { to: '/professor/reports', icon: '▥', label: 'Reports' },
+  { to: '/professor/contribution', icon: averageIcon, label: 'Contribution' },
+  { to: '/professor/reports', icon: projectIcon, label: 'Reports' },
 ];
 
 export default function ProfessorLayout() {

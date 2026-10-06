@@ -9,6 +9,7 @@ import { fetchContributionsByClass } from '../../services/contributions';
 import { fetchClassById } from '../../services/classes';
 import groupIcon from '../../assets/group.png';
 import memberIcon from '../../assets/member.png';
+import taskIcon from '../../assets/task.png';
 import './GroupWorkspace.css';
 
 export default function GroupWorkspace() {
@@ -100,7 +101,7 @@ export default function GroupWorkspace() {
 
       <div className="ws-stats">
         <div className="ws-stat-card">
-          <div className="ws-stat-icon blue">✓</div>
+          <div className="ws-stat-icon blue"><img src={taskIcon} alt="Tasks" style={{ width: 16, height: 16 }} /></div>
           <div className="ws-stat-body">
             <strong>{completedCount}/{groupTasks.length}</strong>
             <span>Tasks Completed</span>
@@ -138,7 +139,7 @@ export default function GroupWorkspace() {
             </div>
             {groupTasks.length === 0 ? (
               <div className="ws-empty">
-                <span className="ws-empty-icon">✓</span>
+                <span className="ws-empty-icon"><img src={taskIcon} alt="Tasks" style={{ width: 32, height: 32, opacity: 0.4 }} /></span>
                 <p>No tasks yet. Create your first task to get started.</p>
                 <Link to={`/leader/tasks/create?group=${group.id}`} className="ws-empty-btn">+ Create Task</Link>
               </div>

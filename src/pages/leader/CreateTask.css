@@ -1,85 +1,188 @@
-.create-task-context {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--primary-bg);
-  border: 1px solid #e8d9f5;
-  border-radius: var(--radius-md);
-  padding: 10px 16px;
-  margin-bottom: 20px;
-  max-width: 600px;
+.ct-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
 }
 
-.ctc-label {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.ctc-group {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.ctc-project {
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin-left: auto;
-}
-
-.create-task-form {
+.ct-form-card {
   background: var(--bg-white);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 30px;
-  max-width: 600px;
+  padding: 28px;
 }
 
-.create-task-form .form-group {
-  margin-bottom: 18px;
+.ct-form-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-primary);
 }
 
-.create-task-form label {
+.ct-form-group {
+  margin-bottom: 20px;
+}
+
+.ct-form-group label {
   display: block;
   font-size: 11px;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
-.create-task-form input,
-.create-task-form textarea,
-.create-task-form select {
+.ct-form-group input,
+.ct-form-group textarea,
+.ct-form-group select {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  font-size: 12px;
+  font-size: 13px;
   outline: none;
   transition: 0.2s;
   font-family: inherit;
   resize: vertical;
-  background: white;
+  background: var(--bg-white);
+  color: var(--text-primary);
 }
 
-.create-task-form input:focus,
-.create-task-form textarea:focus,
-.create-task-form select:focus {
+.ct-form-group input:focus,
+.ct-form-group textarea:focus,
+.ct-form-group select:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-bg);
 }
 
-.form-row-2 {
+.ct-form-group input::placeholder,
+.ct-form-group textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.ct-form-hint {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.ct-form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.form-actions {
+.ct-priority-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.ct-pill {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.ct-pill:hover {
+  border-color: var(--primary-light);
+}
+
+.ct-pill-low.selected {
+  background: #dcfce7;
+  border-color: #22c55e;
+  color: #15803d;
+}
+
+.ct-pill-medium.selected {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+.ct-pill-high.selected {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+.ct-form-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  padding-top: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--border-light);
-  margin-top: 8px;
+}
+
+/* Sidebar */
+.ct-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ct-info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.ct-info-card h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.ct-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ct-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.ct-stat-label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.ct-stat-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ct-capitalize {
+  text-transform: capitalize;
+}
+
+@media (max-width: 900px) {
+  .ct-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ct-form-row-2 {
+    grid-template-columns: 1fr;
+  }
 }

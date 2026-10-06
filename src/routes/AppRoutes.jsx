@@ -41,6 +41,8 @@ import LeaderTasks from '../pages/leader/LeaderTasks';
 import CreateTask from '../pages/leader/CreateTask';
 import SubmissionReview from '../pages/leader/SubmissionReview';
 
+import Notifications from '../pages/shared/Notifications';
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -53,6 +55,7 @@ export default function AppRoutes() {
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="users/:id" element={<UserDetails />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         <Route path="/professor" element={<ProfessorLayout />}>
@@ -66,6 +69,7 @@ export default function AppRoutes() {
           <Route path="groups" element={<Groups />} />
           <Route path="contribution" element={<ContributionMonitoring />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         <Route path="/student" element={<StudentLayout />}>
@@ -81,6 +85,7 @@ export default function AppRoutes() {
           <Route path="activity" element={<ActivityHistory />} />
           <Route path="peer-evaluation" element={<PeerEvaluation />} />
           <Route path="contribution" element={<MyContribution />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         <Route path="/leader" element={<StudentLayout />}>
@@ -91,6 +96,7 @@ export default function AppRoutes() {
           <Route path="tasks/:id" element={<TaskDetails />} />
           <Route path="submissions" element={<SubmissionReview />} />
           <Route path="contribution" element={<MyContribution />} />
+          <Route path="notifications" element={<Notifications />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

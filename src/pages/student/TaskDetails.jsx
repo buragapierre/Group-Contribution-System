@@ -3,8 +3,11 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Button from '../../components/Button';
 import StatusBadge from '../../components/StatusBadge';
+import TimingBadge from '../../components/TimingBadge';
+import { getSubmissionFileUrl, startTaskViaApi } from '../../lib/api';
 import { useUser } from '../../data/UserContext';
-import { fetchTaskById } from '../../services/tasks';
+import { fetchTaskById, updateTaskStatus } from '../../services/tasks';
+import { logActivity } from '../../services/activities';
 import { fetchAllProfiles } from '../../services/profiles';
 import { fetchSubmissionsByTask } from '../../services/submissions';
 import './TaskDetails.css';
@@ -38,6 +41,36 @@ export default function TaskDetails() {
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [id]);
+
+  const openFile = async (submissionId, file) => {
+    if (typeof file === 'string' || !file?.path) return;
+    try {
+      const url = await getSubmissionFileUrl(submissionId, file.path);
+      window.open(url, '_blank', 'noopener');
+    } catch (err) {
+      alert(err.message || 'Could not open file.');
+    }
+  };
+
+  const handleStart = async () => {
+    try {
+      try {
+        const { task: updated } = await startTaskViaApi(task.id);
+        setTask(updated);
+      } catch {
+        await updateTaskStatus(task.id, 'in_progress');
+        setTask({ ...task, status: 'in_progress' });
+      }
+      await logActivity({
+        user_id: currentUser.id,
+        type: 'task_started',
+        message: `You started task "${task.title}"`,
+        timestamp: new Date().toISOString(),
+      }).catch(() => {});
+    } catch (err) {
+      alert(err.message || 'Could not start task.');
+    }
+  };
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>;
 
@@ -85,10 +118,28 @@ export default function TaskDetails() {
                       <p><strong>{new Date(s.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</strong></p>
                       <p>{s.comment}</p>
                       <div className="td-sub-files">
-                        {s.files.map((f, i) => <span key={i} className="file-tag">📄 {f}</span>)}
+                        {(s.files || []).map((f, i) => {
+                          const name = typeof f === 'string' ? f : f?.name || 'File';
+                          const viewable = typeof f !== 'string' && f?.path;
+                          return (
+                            <span key={i} className="file-tag">
+                              📄 {name}
+                              {viewable && (
+                                <button type="button" className="file-tag-view" onClick={() => openFile(s.id, f)}>
+                                  View
+                                </button>
+                              )}
+                            </span>
+                          );
+                        })}
                       </div>
                     </div>
-                    <StatusBadge status={s.status} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end' }}>
+                      <StatusBadge status={s.status} />
+                      {task.deadline && (
+                        <TimingBadge submittedAt={s.submitted_at} deadline={task.deadline} />
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -125,6 +176,11 @@ export default function TaskDetails() {
             <Link to={submitLink}>
               <Button variant="primary" className="full-width">Submit Task</Button>
             </Link>
+          )}
+          {!isLeader && task.status === 'assigned' && task.assigned_to === currentUser?.id && (
+            <Button variant="secondary" className="full-width" onClick={handleStart}>
+              Start Task
+            </Button>
           )}
         </div>
       </div>

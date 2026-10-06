@@ -62,7 +62,7 @@ export default function UserDetails() {
 
   return (
     <div>
-      <Navbar title="User Details" subtitle="View user account information." user={admin} />
+      <Navbar title="User Details" subtitle="View user account information" user={admin} />
 
       <Link to="/admin/users" className="back-link">← Back to Users</Link>
 

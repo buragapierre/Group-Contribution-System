@@ -72,10 +72,10 @@ export default function SignUp() {
       <div className="auth-card">
         <div className="logo">
           <span className="logo-box">▦</span>
-          <span>SYNORA.</span>
+          <span>SYNORA</span>
         </div>
-        <h1>Create Account<span>.</span></h1>
-        <p className="subtitle">Fill in your details to get started.</p>
+        <h1>Create Account</h1>
+        <p className="subtitle">Fill in your details to get started</p>
 
         {error && <div className="auth-error">{error}</div>}
         {success && <div className="auth-success">{success}</div>}
