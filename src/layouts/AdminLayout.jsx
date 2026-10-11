@@ -3,10 +3,12 @@ import Sidebar from '../components/Sidebar';
 import { useUser } from '../data/UserContext';
 import dashboardIcon from '../assets/dashboard.png';
 import userIcon from '../assets/user.png';
+import evaluationIcon from '../assets/evaluation.png';
 
 const adminLinks = [
   { to: '/admin', icon: dashboardIcon, label: 'Dashboard', end: true },
   { to: '/admin/users', icon: userIcon, label: 'Users' },
+  { to: '/admin/security', icon: evaluationIcon, label: 'Security' },
 ];
 
 export default function AdminLayout() {

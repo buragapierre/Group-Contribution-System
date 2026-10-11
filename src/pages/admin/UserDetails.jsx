@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { useUser } from '../../data/UserContext';
-import { fetchProfileById, updateProfile } from '../../services/profiles';
+import { fetchProfileById, updateProfile, fetchAllProfiles } from '../../services/profiles';
 import './UserDetails.css';
 
 export default function UserDetails() {
@@ -20,6 +20,10 @@ export default function UserDetails() {
 
   const handleToggleStatus = async () => {
     if (!profileUser) return;
+    if (profileUser.role === 'admin' && profileUser.status === 'active' && !(await hasOtherAdmin())) {
+      alert('Cannot deactivate the last active admin.');
+      return;
+    }
     setUpdating(true);
     const newStatus = profileUser.status === 'active' ? 'inactive' : 'active';
     try {
@@ -27,6 +31,28 @@ export default function UserDetails() {
       setProfileUser(updated);
     } catch {
       alert('Failed to update status.');
+    }
+    setUpdating(false);
+  };
+
+  const hasOtherAdmin = async () => {
+    try {
+      const all = await fetchAllProfiles();
+      return all.some(u => u.role === 'admin' && u.status === 'active' && u.id !== profileUser.id);
+    } catch {
+      return true;
+    }
+  };
+
+  const handleMakeAdmin = async () => {
+    if (!profileUser) return;
+    if (!confirm(`Make ${profileUser.name} an admin? They will gain full system access.`)) return;
+    setUpdating(true);
+    try {
+      const updated = await updateProfile(profileUser.id, { role: 'admin', status: 'active' });
+      setProfileUser(updated);
+    } catch {
+      alert('Failed to grant admin rights.');
     }
     setUpdating(false);
   };
@@ -46,10 +72,15 @@ export default function UserDetails() {
 
   const handleDemote = async () => {
     if (!profileUser) return;
-    if (!confirm(`Demote ${profileUser.name} back to Student?`)) return;
+    const target = profileUser.role === 'admin' ? 'Professor' : 'Student';
+    if (profileUser.role === 'admin' && !(await hasOtherAdmin())) {
+      alert('Cannot remove the last active admin.');
+      return;
+    }
+    if (!confirm(`Demote ${profileUser.name} back to ${target}?`)) return;
     setUpdating(true);
     try {
-      const updated = await updateProfile(profileUser.id, { role: 'student' });
+      const updated = await updateProfile(profileUser.id, { role: target.toLowerCase() });
       setProfileUser(updated);
     } catch {
       alert('Failed to demote user.');
@@ -103,9 +134,19 @@ export default function UserDetails() {
               Promote to Professor
             </button>
           )}
+          {profileUser.role !== 'admin' && (
+            <button className="btn btn-outline btn-md" onClick={handleMakeAdmin} disabled={updating}>
+              Make Admin
+            </button>
+          )}
           {profileUser.role === 'professor' && (
             <button className="btn btn-secondary btn-md" onClick={handleDemote} disabled={updating}>
               Demote to Student
+            </button>
+          )}
+          {profileUser.role === 'admin' && (
+            <button className="btn btn-secondary btn-md" onClick={handleDemote} disabled={updating}>
+              Remove Admin
             </button>
           )}
           <button className="btn btn-secondary btn-md" onClick={() => navigate(-1)}>

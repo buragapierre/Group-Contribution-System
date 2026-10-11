@@ -2,12 +2,16 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from '../pages/auth/Login';
 import SignUp from '../pages/auth/SignUp';
+import AdminLogin from '../pages/auth/AdminLogin';
+import ForgotPassword from '../pages/auth/ForgotPassword';
+import ResetPassword from '../pages/auth/ResetPassword';
 import NotFound from '../pages/auth/NotFound';
 
 import AdminLayout from '../layouts/AdminLayout';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import Users from '../pages/admin/Users';
 import UserDetails from '../pages/admin/UserDetails';
+import Security from '../pages/admin/Security';
 
 import ProfessorLayout from '../layouts/ProfessorLayout';
 import ProfessorDashboard from '../pages/professor/ProfessorDashboard';
@@ -50,11 +54,15 @@ export default function AppRoutes() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="users/:id" element={<UserDetails />} />
+          <Route path="security" element={<Security />} />
           <Route path="notifications" element={<Notifications />} />
         </Route>
 

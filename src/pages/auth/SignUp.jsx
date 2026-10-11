@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import supabase from '../../lib/supabase';
 import showIcon from '../../assets/show.png';
 import hideIcon from '../../assets/hide.png';
+import Captcha, { isCaptchaEnabled, verifyCaptchaToken } from '../../components/Turnstile';
 
 export default function SignUp() {
   const [form, setForm] = useState({ name: '', email: '', idNumber: '', password: '', confirmPassword: '' });
@@ -11,6 +12,8 @@ export default function SignUp() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(0);
   const navigate = useNavigate();
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -43,7 +46,22 @@ export default function SignUp() {
       return;
     }
 
+    if (isCaptchaEnabled() && !captchaToken) {
+      setError('Please complete the captcha.');
+      return;
+    }
+
     setSubmitting(true);
+
+    try {
+      await verifyCaptchaToken(captchaToken);
+    } catch (captchaErr) {
+      setSubmitting(false);
+      setCaptchaKey(k => k + 1);
+      setCaptchaToken('');
+      setError(captchaErr.message);
+      return;
+    }
 
     const { error: authError } = await supabase.auth.signUp({
       email: form.email,
@@ -116,6 +134,7 @@ export default function SignUp() {
               <input type={showPassword ? 'text' : 'password'} name="confirmPassword" placeholder="Confirm your password" value={form.confirmPassword} onChange={handleChange} required />
             </div>
           </div>
+          <Captcha onToken={setCaptchaToken} resetKey={captchaKey} />
           <Button type="submit" variant="primary" className="full-width" disabled={submitting}>
             {submitting ? 'Creating Account...' : 'Sign Up'}
           </Button>

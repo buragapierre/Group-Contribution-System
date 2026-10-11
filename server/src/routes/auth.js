@@ -18,4 +18,26 @@ router.get('/me', requireAuth, async (req, res, next) => {
   }
 });
 
+// POST /api/auth/captcha  { token }
+// Verifies a Cloudflare Turnstile token. Passes open when no secret is
+// configured (dev mode) so the app works before keys exist.
+router.post('/captcha', async (req, res, next) => {
+  try {
+    const secret = process.env.TURNSTILE_SECRET_KEY;
+    if (!secret) return res.json({ ok: true, dev: true });
+    const { token } = req.body || {};
+    if (!token) return res.status(400).json({ error: 'Captcha token missing' });
+    const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ secret, response: token }),
+    });
+    const result = await verify.json();
+    if (!result.success) return res.status(400).json({ error: 'Captcha check failed' });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

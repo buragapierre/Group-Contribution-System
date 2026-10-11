@@ -5,6 +5,7 @@ import { useUser } from '../../data/UserContext';
 import supabase from '../../lib/supabase';
 import showIcon from '../../assets/show.png';
 import hideIcon from '../../assets/hide.png';
+import Captcha, { isCaptchaEnabled, verifyCaptchaToken } from '../../components/Turnstile';
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
@@ -18,6 +19,8 @@ export default function Login() {
   const [attempts, setAttempts] = useState(0);
   const [lockedUntil, setLockedUntil] = useState(null);
   const [lockoutTimer, setLockoutTimer] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [captchaKey, setCaptchaKey] = useState(0);
   const navigate = useNavigate();
   const { login } = useUser();
 
@@ -69,7 +72,22 @@ export default function Login() {
       return;
     }
 
+    if (isCaptchaEnabled() && !captchaToken) {
+      setError('Please complete the captcha.');
+      return;
+    }
+
     setSubmitting(true);
+
+    try {
+      await verifyCaptchaToken(captchaToken);
+    } catch (captchaErr) {
+      setSubmitting(false);
+      setCaptchaKey(k => k + 1);
+      setCaptchaToken('');
+      setError(captchaErr.message);
+      return;
+    }
 
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
@@ -162,8 +180,9 @@ export default function Login() {
             </div>
           </div>
           <div className="form-row" style={{ justifyContent: 'flex-end', marginBottom: 20 }}>
-            <a href="#" style={{ fontSize: 11, color: 'var(--primary)' }}>Forgot password?</a>
+            <Link to="/forgot-password" style={{ fontSize: 11, color: 'var(--primary)' }}>Forgot password?</Link>
           </div>
+          <Captcha onToken={setCaptchaToken} resetKey={captchaKey} />
           <Button type="submit" variant="primary" className="full-width" disabled={submitting || (lockedUntil && Date.now() < lockedUntil)}>
             {submitting ? 'Logging in...' : 'Login'}
           </Button>
@@ -171,6 +190,9 @@ export default function Login() {
 
         <p className="auth-link" style={{ marginTop: 16 }}>
           Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
+        <p className="auth-link" style={{ marginTop: 8 }}>
+          Administrator? <Link to="/admin/login">Admin login</Link>
         </p>
 
         <style>{`
