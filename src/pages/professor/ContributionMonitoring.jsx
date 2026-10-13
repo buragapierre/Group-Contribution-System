@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar';
 import { fetchProfessorContributions } from '../../services/contributions';
 import { fetchClasses } from '../../services/classes';
 import { fetchGroupsByClass } from '../../services/groups';
+import { fetchClassRatings } from '../../lib/api';
 import { useUser } from '../../data/UserContext';
 import './ContributionMonitoring.css';
 
@@ -11,6 +12,7 @@ export default function ContributionMonitoring() {
   const [professorContributions, setProfessorContributions] = useState([]);
   const [professorClasses, setProfessorClasses] = useState([]);
   const [allGroups, setAllGroups] = useState([]);
+  const [ratingsByUser, setRatingsByUser] = useState({});
   const [loading, setLoading] = useState(true);
 
   const user = { name: currentUser?.name || 'Professor', avatar: currentUser?.avatar || 'PR', role: 'Professor' };
@@ -22,13 +24,19 @@ export default function ContributionMonitoring() {
       fetchClasses(currentUser.id),
     ]).then(async ([contributions, classes]) => {
       let groups = [];
+      const ratingMap = {};
       for (const cls of classes) {
         const classGroups = await fetchGroupsByClass(cls.id);
         groups = groups.concat(classGroups);
+        try {
+          const { ratings } = await fetchClassRatings(cls.id);
+          for (const r of ratings || []) ratingMap[r.rated_user_id] = r.score;
+        } catch {}
       }
       setProfessorContributions(contributions);
       setProfessorClasses(classes);
       setAllGroups(groups);
+      setRatingsByUser(ratingMap);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [currentUser]);
@@ -50,6 +58,7 @@ export default function ContributionMonitoring() {
               <th>Tasks Completed</th>
               <th>On-Time</th>
               <th>Contribution</th>
+              <th>Leader Grade</th>
             </tr>
           </thead>
           <tbody>
@@ -77,6 +86,7 @@ export default function ContributionMonitoring() {
                       <span style={{ color: c.contribution_percent >= 80 ? 'var(--success)' : c.contribution_percent >= 50 ? 'var(--warning)' : 'var(--danger)' }}>{c.contribution_percent}%</span>
                     </div>
                   </td>
+                  <td><strong>{ratingsByUser[c.user_id] ?? '-'}</strong></td>
                 </tr>
               );
             })}

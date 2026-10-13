@@ -33,6 +33,12 @@ router.get('/contributions', requireAuth, async (req, res, next) => {
       .eq('class_id', classId)
       .order('contribution_percent', { ascending: false });
 
+    const { data: gradeRows } = await db
+      .from('ratings')
+      .select('rated_user_id, score')
+      .eq('class_id', classId);
+    const gradeByUser = new Map((gradeRows || []).map(r => [r.rated_user_id, r.score]));
+
     const avg = (rows || []).length
       ? Math.round(rows.reduce((a, c) => a + (c.contribution_percent || 0), 0) / rows.length)
       : 0;
@@ -57,9 +63,9 @@ router.get('/contributions', requireAuth, async (req, res, next) => {
     doc.moveDown();
 
     const startX = 48;
-    const widths = [180, 70, 80, 70, 60];
+    const widths = [150, 55, 65, 55, 45, 60];
     const totalW = widths.reduce((a, b) => a + b, 0);
-    const headers = ['Student', 'Assigned', 'Completed', 'On-time', '%'];
+    const headers = ['Student', 'Assigned', 'Completed', 'On-time', '%', 'Grade'];
     const rowH = 22;
 
     function drawHeader(y) {
@@ -87,6 +93,7 @@ router.get('/contributions', requireAuth, async (req, res, next) => {
           String(c.tasks_completed ?? 0),
           String(c.on_time_completions ?? 0),
           `${c.contribution_percent ?? 0}%`,
+          gradeByUser.has(c.user_id) ? String(gradeByUser.get(c.user_id)) : '-',
         ];
         let cx = startX;
         doc.fillColor('#000000');

@@ -116,6 +116,41 @@ export async function fetchNotifications() {
   return res.json();
 }
 
+export async function fetchRatings(groupId) {
+  const res = await fetch(`${API_URL}/api/ratings?group_id=${groupId}`, {
+    headers: await authHeaders(),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || 'Failed to fetch ratings');
+  }
+  return res.json();
+}
+
+export async function fetchClassRatings(classId) {
+  const res = await fetch(`${API_URL}/api/ratings?class_id=${classId}`, {
+    headers: await authHeaders(),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || 'Failed to fetch ratings');
+  }
+  return res.json();
+}
+
+export async function saveRating(groupId, ratedUserId, score, comment = '') {
+  const res = await fetch(`${API_URL}/api/ratings`, {
+    method: 'POST',
+    headers: await authHeaders(),
+    body: JSON.stringify({ group_id: groupId, rated_user_id: ratedUserId, score, comment }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || 'Failed to save rating');
+  }
+  return res.json();
+}
+
 export async function verifySessionViaApi() {
   const res = await fetch(`${API_URL}/api/auth/me`, {
     headers: await authHeaders(),

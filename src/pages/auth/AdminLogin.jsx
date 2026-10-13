@@ -50,6 +50,25 @@ export default function AdminLogin() {
     }
 
     if (data.session) {
+      try {
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        if (aal?.nextLevel === 'aal2' && aal?.currentLevel !== 'aal2') {
+          const { data: factors } = await supabase.auth.mfa.listFactors();
+          const totp = factors?.totp?.[0];
+          if (!totp) throw new Error('no-mfa');
+          const { data: challenge, error: chError } = await supabase.auth.mfa.challenge({ factorId: totp.id });
+          if (chError) throw chError;
+          setMfaRequired({ factorId: totp.id, challengeId: challenge.id });
+          setSubmitting(false);
+          return;
+        }
+      } catch (mfaErr) {
+        if (mfaErr.message === 'no-mfa') {
+          setSubmitting(false);
+          setError('Login needs extra verification. Try again.');
+          return;
+        }
+      }
       await finishAdminLogin(data.user);
       return;
     }

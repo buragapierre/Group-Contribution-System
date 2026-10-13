@@ -25,7 +25,8 @@ In group projects, it's often unclear who contributed what. Synora solves this b
 | Technology | Purpose |
 |------------|---------|
 | React + Vite | Frontend UI |
-| Supabase | Backend database and authentication |
+| Express (Node.js) | Backend API: auth, calculations, reports |
+| Supabase | Database, authentication, file storage |
 | PostgreSQL | Relational database |
 | Row Level Security | Data access control |
 
@@ -34,37 +35,71 @@ In group projects, it's often unclear who contributed what. Synora solves this b
 ## 2. Core Features
 
 ### 2.1 Authentication & User Management
-- Email/password sign up and login
-- Profile completion for students (course, year, section)
-- Role-based access (Admin, Professor, Student)
-- Admin can promote students to professors
+This is how users enter the system and how accounts are controlled. Users
+register and log in with email and password. Students fill in their
+course, year, and section on first login. Admins have their own login
+page that turns away non-admins. Admins can promote students to
+professors, make other admins, and turn accounts on or off — but the
+system will not let them remove the very last admin.
 
 ### 2.2 Class Management
-- Professors create classes with auto-generated 6-character codes
-- Students join classes using the code
-- View enrolled students and class progress
+This is how classes are set up. Professors create a class and the system
+gives it a short code. Students type that code to join. Everything else —
+projects, groups, tasks, scores — lives inside a class.
 
 ### 2.3 Project Management
-- Professors create projects with title, description, and deadline
-- Projects are organized within classes
-- Track overall project progress
+This is what the class works on. Professors create a project with a title,
+description, and deadline. The project shows one progress number that
+moves as group work gets finished.
 
 ### 2.4 Group Management
-- Professors create groups and assign leaders
-- Leaders can add/remove members from their group
-- Each group works on projects within a class
+This is how students are organized into teams. Professors make a group
+and pick one member as leader. The leader adds or removes members. Tasks
+are given out and checked inside the group.
 
 ### 2.5 Task Management
-- Leaders create tasks with title, description, assignee, deadline, and priority
-- Tasks are assigned to individual group members
-- Members submit work with comments/descriptions
-- Leaders review submissions and provide feedback
+This is the actual work list. Leaders create tasks with a title,
+instructions, deadline, and priority, and give each one to a member.
+Members press Start when they begin, then Submit when done. The leader
+checks the work and either approves it, sends it back, or rejects it.
 
-### 2.6 Contribution Tracking
-- System tracks task completion rates
-- Monitors punctuality (on-time vs late submissions)
-- Calculates individual contribution percentages
-- Stores contribution history
+### 2.6 Submissions & File Handling
+This is how finished work reaches the leader. Members attach their files
+and a short note. Only the right people can open each file — students see
+their own, leaders and professors open them through temporary links.
+
+### 2.7 Contribution Tracking
+This is the automatic score. Every time a leader checks work, the system
+recounts for each student: how many tasks were given, how many were
+approved, how many were on time, and the percentage score. Group and
+project progress update at the same time.
+
+### 2.8 Leader Grading
+This is the leader's personal grade for each member, from 0 to 100. It
+captures what numbers miss — effort, quality, teamwork. Professors see it
+beside the automatic score when deciding final grades.
+
+### 2.9 Deadline Reminders & Notifications
+This is how the system nags people. Overdue and soon-due tasks show as
+colored banners and badges. The bell icon collects personal alerts:
+students get deadlines and review results, leaders get work waiting for
+review, professors get unreviewed work, admins get pending verifications.
+
+### 2.10 Activity History
+This is each student's diary. Every important action is listed by date:
+tasks given, started, submitted, approved, members added or removed. If
+anyone argues about who did what, the answer is here.
+
+### 2.11 Reports & PDF Export
+This is what the professor prints or saves. One button downloads a report
+for the whole class: every student ranked by score, with tasks given,
+tasks done, on-time count, percentage, and the leader's grade.
+
+### 2.12 Security Protections
+This is what keeps bad actors out. Wrong passwords 5 times locks the
+account for 15 minutes. Passwords must be strong. A robot check guards
+the login and signup pages. Admins type a second code from their phone
+after their password. Forgotten passwords reset through email.
 
 ---
 
@@ -326,4 +361,4 @@ npm run dev
 
 ---
 
-*Last updated: September 21, 2026*
+*Last updated: October 12, 2026*

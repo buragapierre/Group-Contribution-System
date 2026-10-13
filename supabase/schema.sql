@@ -272,6 +272,29 @@ USING (
 );
 
 -- ============================================
+-- RATINGS: leader grades per member
+-- ============================================
+CREATE TABLE IF NOT EXISTS ratings (
+  id BIGSERIAL PRIMARY KEY,
+  group_id BIGINT NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+  class_id BIGINT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+  rater_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  rated_user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  score INT NOT NULL CHECK (score >= 0 AND score <= 100),
+  comment TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (group_id, rated_user_id)
+);
+
+ALTER TABLE ratings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can read ratings" ON ratings FOR SELECT USING (true);
+CREATE POLICY "Leaders can manage own group ratings" ON ratings FOR ALL USING (
+  EXISTS (SELECT 1 FROM groups WHERE groups.id = group_id AND groups.leader_id = auth.uid())
+);
+
+-- ============================================
 -- AUTH TRIGGER: Auto-create profile on signup
 -- ============================================
 CREATE OR REPLACE FUNCTION public.handle_new_user()

@@ -7,6 +7,7 @@ import taskRoutes from './routes/tasks.js';
 import submissionRoutes from './routes/submissions.js';
 import reportRoutes from './routes/reports.js';
 import notificationRoutes from './routes/notifications.js';
+import ratingRoutes from './routes/ratings.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ratings', ratingRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 

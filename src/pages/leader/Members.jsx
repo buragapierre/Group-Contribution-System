@@ -8,6 +8,7 @@ import { fetchGroupMembers, fetchGroupMemberIds, addGroupMember, removeGroupMemb
 import { fetchContributionsByClass } from '../../services/contributions';
 import { fetchAllProfiles } from '../../services/profiles';
 import { logActivity } from '../../services/activities';
+import { fetchRatings, saveRating } from '../../lib/api';
 import './Members.css';
 
 export default function Members() {
@@ -19,6 +20,9 @@ export default function Members() {
 
   const [memberData, setMemberData] = useState([]);
   const [availableStudents, setAvailableStudents] = useState([]);
+  const [ratings, setRatings] = useState({});
+  const [ratingInputs, setRatingInputs] = useState({});
+  const [savingId, setSavingId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const refreshMembers = () => {
@@ -49,6 +53,38 @@ export default function Members() {
     refreshMembers();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group]);
+
+  useEffect(() => {
+    if (!group) return;
+    fetchRatings(group.id)
+      .then(result => {
+        const map = {};
+        const inputs = {};
+        for (const r of result.ratings || []) {
+          map[r.rated_user_id] = r;
+          inputs[r.rated_user_id] = r.score;
+        }
+        setRatings(map);
+        setRatingInputs(inputs);
+      })
+      .catch(() => {});
+  }, [group]);
+
+  const handleSaveRating = async (userId) => {
+    const score = Number(ratingInputs[userId]);
+    if (!Number.isFinite(score) || score < 0 || score > 100) {
+      alert('Score must be 0-100.');
+      return;
+    }
+    setSavingId(userId);
+    try {
+      const { rating } = await saveRating(group.id, userId, Math.round(score));
+      setRatings(prev => ({ ...prev, [userId]: rating }));
+    } catch (err) {
+      alert(err.message || 'Failed to save rating.');
+    }
+    setSavingId(null);
+  };
 
   const handleAddMember = async () => {
     if (!newMember) return;
@@ -136,6 +172,29 @@ export default function Members() {
             </div>
             {!m.isLeader && (
               <div className="member-card-actions">
+                <div className="member-rating-row">
+                  <label>Grade</label>
+                  <div className="member-rating-input">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      placeholder="0-100"
+                      value={ratingInputs[m.id] ?? ''}
+                      onChange={(e) => setRatingInputs(prev => ({ ...prev, [m.id]: e.target.value }))}
+                    />
+                    <button
+                      className="member-save-btn"
+                      disabled={savingId === m.id}
+                      onClick={() => handleSaveRating(m.id)}
+                    >
+                      {savingId === m.id ? '...' : ratings[m.id] ? 'Update' : 'Save'}
+                    </button>
+                  </div>
+                  {ratings[m.id] && (
+                    <span className="member-rating-saved">Saved: {ratings[m.id].score}</span>
+                  )}
+                </div>
                 <button className="member-remove-btn" onClick={() => handleRemoveMember(m.id)}>Remove</button>
               </div>
             )}
